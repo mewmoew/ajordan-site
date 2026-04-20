@@ -1,0 +1,4328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJORDAN // UNIT ACTIVE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        /* ── BASE ── */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'VT323', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            font-size: 1.08rem;
+        }
+
+        /* ── GALAXY BACKGROUND ── */
+        #galaxy-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Dense starfield — two layers at different scales for depth */
+        .stars-sm {
+            position: absolute;
+            inset: -20px;
+            background-image:
+                radial-gradient(1px 1px at  8% 12%, rgba(255,255,255,0.55) 0%, transparent 100%),
+                radial-gradient(1px 1px at 22% 38%, rgba(255,255,255,0.45) 0%, transparent 100%),
+                radial-gradient(1px 1px at 37% 68%, rgba(255,255,255,0.40) 0%, transparent 100%),
+                radial-gradient(1px 1px at 53% 18%, rgba(255,255,255,0.60) 0%, transparent 100%),
+                radial-gradient(1px 1px at 66% 82%, rgba(255,255,255,0.45) 0%, transparent 100%),
+                radial-gradient(1px 1px at 79% 47%, rgba(255,255,255,0.50) 0%, transparent 100%),
+                radial-gradient(1px 1px at 91%  8%, rgba(255,255,255,0.40) 0%, transparent 100%),
+                radial-gradient(1px 1px at 14% 88%, rgba(255,255,255,0.45) 0%, transparent 100%),
+                radial-gradient(1px 1px at 44% 28%, rgba(255,255,255,0.50) 0%, transparent 100%),
+                radial-gradient(1px 1px at 60% 91%, rgba(255,255,255,0.35) 0%, transparent 100%),
+                radial-gradient(1px 1px at 75% 33%, rgba(255,255,255,0.40) 0%, transparent 100%),
+                radial-gradient(1px 1px at 30%  5%, rgba(255,255,255,0.35) 0%, transparent 100%),
+                radial-gradient(1px 1px at 86% 72%, rgba(255,255,255,0.30) 0%, transparent 100%),
+                radial-gradient(1px 1px at  5% 55%, rgba(255,255,255,0.40) 0%, transparent 100%),
+                radial-gradient(1px 1px at 48% 60%, rgba(192,38,211,0.35) 0%, transparent 100%),
+                radial-gradient(1px 1px at 17% 74%, rgba(0,255,65,0.25)   0%, transparent 100%);
+            animation: stardrift-sm 140s linear infinite alternate;
+        }
+        .stars-lg {
+            position: absolute;
+            inset: -20px;
+            background-image:
+                radial-gradient(2px 2px at 19% 22%, rgba(255,255,255,0.30) 0%, transparent 100%),
+                radial-gradient(2px 2px at 63% 54%, rgba(192,38,211,0.28) 0%, transparent 100%),
+                radial-gradient(2px 2px at 41% 77%, rgba(255,255,255,0.25) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 84% 16%, rgba(0,255,65,0.22) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at  7% 43%, rgba(255,255,255,0.28) 0%, transparent 100%),
+                radial-gradient(2px 2px at 56% 11%, rgba(255,255,255,0.22) 0%, transparent 100%),
+                radial-gradient(2px 2px at 92% 62%, rgba(192,38,211,0.20) 0%, transparent 100%);
+            animation: stardrift-lg 190s linear infinite alternate;
+        }
+
+        @keyframes stardrift-sm {
+            0%   { transform: translate(0,0); }
+            100% { transform: translate(-18px,-12px); }
+        }
+        @keyframes stardrift-lg {
+            0%   { transform: translate(0,0); }
+            100% { transform: translate(14px,-20px); }
+        }
+
+        /* Nebula glow layers */
+        .nebula-1 {
+            position: absolute;
+            width: 700px; height: 500px;
+            top: -120px; left: -180px;
+            background: radial-gradient(ellipse at center, rgba(192,38,211,0.07) 0%, rgba(192,38,211,0.02) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(35px);
+            animation: ndrift1 90s ease-in-out infinite alternate;
+        }
+        .nebula-2 {
+            position: absolute;
+            width: 600px; height: 400px;
+            bottom: 5%; right: -120px;
+            background: radial-gradient(ellipse at center, rgba(0,255,65,0.05) 0%, rgba(0,255,65,0.01) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(45px);
+            animation: ndrift2 110s ease-in-out infinite alternate;
+        }
+        .nebula-3 {
+            position: absolute;
+            width: 800px; height: 350px;
+            top: 38%; left: 15%;
+            background: radial-gradient(ellipse at center, rgba(192,38,211,0.04) 0%, transparent 65%);
+            border-radius: 50%;
+            filter: blur(55px);
+            animation: ndrift3 75s ease-in-out infinite alternate;
+        }
+
+        @keyframes ndrift1 {
+            0%   { transform: translate(0,0) scale(1); opacity: 0.7; }
+            50%  { transform: translate(70px,50px) scale(1.08); opacity: 1; }
+            100% { transform: translate(30px,100px) scale(0.96); opacity: 0.8; }
+        }
+        @keyframes ndrift2 {
+            0%   { transform: translate(0,0) scale(1); }
+            50%  { transform: translate(-50px,-35px) scale(1.06); }
+            100% { transform: translate(-90px,35px) scale(1.12); }
+        }
+        @keyframes ndrift3 {
+            0%   { transform: translate(0,0) scale(1); opacity: 0.5; }
+            100% { transform: translate(45px,-25px) scale(1.07); opacity: 0.85; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pfloat linear infinite;
+        }
+        @keyframes pfloat {
+            0%   { transform: translateY(0) translateX(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.5; }
+            100% { transform: translateY(-320px) translateX(25px); opacity: 0; }
+        }
+
+        /* ── NEON UTILITIES ── */
+        .neon-green  { color: #00ff41; text-shadow: 0 0 8px #00ff41, 0 0 16px rgba(0,255,65,0.5); }
+        .neon-purple { color: #c026d3; text-shadow: 0 0 8px #c026d3, 0 0 16px rgba(192,38,211,0.55); }
+
+        .title-purple {
+            color: #c026d3;
+            text-shadow: 0 0 6px #c026d3, 0 0 14px rgba(192,38,211,0.5);
+        }
+
+        /* ── BORDERS ── */
+        .border-green  { border: 2px solid #00ff41; box-shadow: 0 0 12px rgba(0,255,65,0.5); }
+        .border-purple { border: 2px solid #c026d3; box-shadow: 0 0 12px rgba(192,38,211,0.5); }
+
+        /* ── HEADER BAR ── */
+        .header-bar {
+            border: 1px solid rgba(192,38,211,0.6);
+            box-shadow: 0 0 16px rgba(192,38,211,0.28), 0 0 32px rgba(192,38,211,0.10), inset 0 1px 0 rgba(255,255,255,0.07);
+            background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.7) 100%);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 40px;
+            position: relative;
+        }
+        .header-bar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18) 50%, transparent);
+            pointer-events: none;
+        }
+
+        /* ── LIVE DOT ── */
+        .live-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #c026d3;
+            box-shadow: 0 0 8px #c026d3;
+            margin-right: 6px;
+            vertical-align: middle;
+            animation: livepulse 1.6s ease-in-out infinite;
+        }
+        @keyframes livepulse {
+            0%,100% { opacity:1; box-shadow: 0 0 8px #c026d3; }
+            50%      { opacity:0.35; box-shadow: none; }
+        }
+
+        /* ── MODAL ── */
+        .modal-box {
+            border: 2px solid #c026d3;
+            box-shadow: 0 0 30px #c026d3, 0 0 60px rgba(192,38,211,0.3), inset 0 0 20px rgba(192,38,211,0.04);
+        }
+        .modal-glitch { animation: glitch 0.45s linear; }
+        @keyframes glitch {
+            0%,100% { transform: translate(0); filter: none; }
+            20%     { transform: translate(-3px, 2px); filter: hue-rotate(30deg); }
+            40%     { transform: translate(3px,-2px); filter: hue-rotate(-30deg) brightness(1.3); }
+            60%     { transform: translate(-2px, 1px); filter: none; }
+            80%     { transform: translate(2px,-1px); filter: hue-rotate(15deg); }
+        }
+
+        /* ── FEED ── */
+        .feed-scroll { max-height: 260px; overflow-y: auto; }
+        .feed-scroll::-webkit-scrollbar { width: 3px; }
+        .feed-scroll::-webkit-scrollbar-thumb { background: #c026d3; }
+
+        .feed-item {
+            border: 1px solid #2a0a3a;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .feed-item:hover {
+            border-color: #c026d3;
+            box-shadow: 0 0 12px rgba(192,38,211,0.3);
+        }
+        .feed-item.featured {
+            border-color: rgba(192,38,211,0.5);
+            background: rgba(192,38,211,0.04);
+        }
+
+        /* ── REVIEWS ── */
+        .reviews-scroll { max-height: 200px; overflow-y: auto; }
+        .reviews-scroll::-webkit-scrollbar { width: 3px; }
+        .reviews-scroll::-webkit-scrollbar-thumb { background: #c026d3; }
+
+        /* ── INPUTS ── */
+        textarea, input[type="text"] {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: #e0e0e0;
+            background: #000;
+        }
+        textarea::placeholder, input[type="text"]::placeholder { color: #4a1a5a; }
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 8px #c026d3;
+        }
+
+        /* ── BUTTONS ── */
+        .btn-purple {
+            border: 2px solid #c026d3;
+            color: #c026d3;
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+        }
+        .btn-purple:hover {
+            background: #c026d3;
+            color: #000;
+            box-shadow: 0 0 20px #c026d3, 0 0 40px rgba(192,38,211,0.35);
+        }
+        .btn-green {
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+        }
+        .btn-green:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 16px #00ff41;
+        }
+
+        /* ── POST CARD ── */
+        .post-card {
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 8px rgba(0,255,65,0.3);
+            transition: box-shadow 0.2s;
+        }
+        .post-card:hover { box-shadow: 0 0 20px rgba(0,255,65,0.6); }
+
+        /* ── HIGHLIGHT ── */
+        .highlight-purple {
+            color: #ffd700;
+            font-size: 1.05em;
+        }
+
+        /* ── TRENDING BADGE ── */
+        .badge {
+            font-size: 0.65rem;
+            padding: 2px 7px;
+            letter-spacing: 1px;
+            vertical-align: middle;
+        }
+
+        /* ── MAIN BACKGROUND IMAGE ── */
+        #mainbg-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: url('images/cat.png') center center / cover no-repeat;
+            filter: brightness(0.25) contrast(0.78);
+        }
+        #mainbg-overlay {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.75) 100%),
+                rgba(0,0,0,0.62);
+        }
+
+        /* Content sits above all background layers */
+        .max-w-7xl { position: relative; z-index: 1; }
+
+        /* ═══════════════════════════════════════
+           GLASS PANELS — PS3/CONSOLE DARK GLASS
+           ═══════════════════════════════════════ */
+        .glass-panel {
+            position: relative;
+            background: linear-gradient(
+                160deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(20,0,30,0.58)    35%,
+                rgba(0,0,0,0.68)      100%
+            );
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .glass-panel:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Top-edge gloss line */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,255,255,0.14) 20%,
+                rgba(255,255,255,0.28) 50%,
+                rgba(255,255,255,0.14) 80%,
+                transparent 100%
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Inner top-half sheen */
+        .glass-panel::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 42%;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.04) 0%,
+                transparent 100%
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .glass-purple {
+            border: 1px solid rgba(192,38,211,0.7);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.55),
+                0 0 22px rgba(192,38,211,0.35),
+                0 0 50px rgba(192,38,211,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.09),
+                inset 0 0 60px rgba(192,38,211,0.07);
+        }
+        .glass-purple:hover {
+            box-shadow:
+                0 12px 40px rgba(0,0,0,0.65),
+                0 0 30px rgba(192,38,211,0.50),
+                0 0 60px rgba(192,38,211,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.09),
+                inset 0 0 60px rgba(192,38,211,0.10);
+        }
+
+        .glass-green {
+            border: 1px solid rgba(0,255,65,0.60);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.55),
+                0 0 22px rgba(0,255,65,0.28),
+                0 0 50px rgba(0,255,65,0.10),
+                inset 0 1px 0 rgba(255,255,255,0.09),
+                inset 0 0 60px rgba(0,255,65,0.06);
+        }
+        .glass-green:hover {
+            box-shadow:
+                0 12px 40px rgba(0,0,0,0.65),
+                0 0 30px rgba(0,255,65,0.42),
+                0 0 60px rgba(0,255,65,0.16),
+                inset 0 1px 0 rgba(255,255,255,0.09),
+                inset 0 0 60px rgba(0,255,65,0.08);
+        }
+
+        /* Panel content sits above ::before/::after pseudo-layers */
+        .glass-panel > * { position: relative; z-index: 3; }
+
+        /* ── DARK ICE GLASS — hero + popular post panels ── */
+        .glass-ice {
+            background: linear-gradient(
+                155deg,
+                rgba(210,228,255,0.07)  0%,
+                rgba(160,200,240,0.04)  28%,
+                rgba(5,8,20,0.76)       62%,
+                rgba(0,0,0,0.88)        100%
+            );
+            border: 1px solid rgba(200,220,255,0.38);
+            box-shadow:
+                0 10px 44px rgba(0,0,0,0.78),
+                0 0 0 1px rgba(180,210,255,0.07),
+                0 0 22px rgba(180,210,255,0.13),
+                0 0 55px rgba(120,170,230,0.07),
+                inset 0 1px 0 rgba(230,242,255,0.18),
+                inset 0 -1px 0 rgba(180,210,255,0.06),
+                inset 0 0 90px rgba(150,190,240,0.05);
+        }
+        /* subtle noise texture via SVG data-URI */
+        .glass-ice::before {
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(210,228,255,0.12) 20%,
+                rgba(230,242,255,0.26) 50%,
+                rgba(210,228,255,0.12) 80%,
+                transparent 100%
+            ) !important;
+        }
+        .glass-ice::after {
+            background: linear-gradient(180deg,
+                rgba(200,220,255,0.09) 0%,
+                rgba(170,200,240,0.04) 40%,
+                transparent 100%
+            ) !important;
+            height: 60% !important;
+        }
+        .glass-ice:hover {
+            border-color: rgba(210,230,255,0.50);
+            box-shadow:
+                0 14px 52px rgba(0,0,0,0.84),
+                0 0 0 1px rgba(180,210,255,0.12),
+                0 0 30px rgba(190,218,255,0.20),
+                0 0 65px rgba(130,178,238,0.10),
+                inset 0 1px 0 rgba(230,242,255,0.22),
+                inset 0 0 90px rgba(150,190,240,0.07);
+        }
+
+        /* ── LEFT COLUMN: solid black, high contrast ── */
+        .glass-left {
+            border-color: rgba(192,38,211,0.80) !important;
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.80),
+                0 0 26px rgba(192,38,211,0.40),
+                0 0 55px rgba(192,38,211,0.14),
+                inset 0 1px 0 rgba(255,255,255,0.08),
+                inset 0 0 40px rgba(192,38,211,0.06) !important;
+            background: #000 !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        .glass-left:hover {
+            box-shadow:
+                0 12px 42px rgba(0,0,0,0.88),
+                0 0 34px rgba(192,38,211,0.55),
+                0 0 65px rgba(192,38,211,0.20),
+                inset 0 1px 0 rgba(255,255,255,0.10),
+                inset 0 0 40px rgba(192,38,211,0.09) !important;
+        }
+
+        /* ── BUTTON MICRO-INTERACTIONS ── */
+        .btn-purple:hover {
+            box-shadow: 0 0 28px #c026d3, 0 0 55px rgba(192,38,211,0.45) !important;
+        }
+        .btn-green:hover {
+            box-shadow: 0 0 24px #00ff41, 0 0 48px rgba(0,255,65,0.35) !important;
+        }
+
+        /* ── HERO PANEL — GLOW FLICKER + LIGHT SWEEP ── */
+        @keyframes heroFlicker {
+            0%,100% { text-shadow: 0 0 6px #c026d3, 0 0 14px rgba(192,38,211,0.5); }
+            4%       { text-shadow: 0 0 2px #c026d3, 0 0 4px rgba(192,38,211,0.2); }
+            6%       { text-shadow: 0 0 10px #c026d3, 0 0 24px rgba(192,38,211,0.7), 0 0 40px rgba(192,38,211,0.3); }
+            48%      { text-shadow: 0 0 6px #c026d3, 0 0 14px rgba(192,38,211,0.5); }
+            50%      { text-shadow: 0 0 3px #c026d3, 0 0 6px rgba(192,38,211,0.3); }
+            52%      { text-shadow: 0 0 8px #c026d3, 0 0 18px rgba(192,38,211,0.6); }
+        }
+        .hero-title {
+            animation: heroFlicker 6s ease-in-out infinite;
+        }
+
+        /* Sweep overlay inside hero panel */
+        .hero-sweep::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            left: -100%;
+            width: 60%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,255,255,0.04) 40%,
+                rgba(255,255,255,0.07) 50%,
+                rgba(255,255,255,0.04) 60%,
+                transparent 100%
+            );
+            animation: heroPanelSweep 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 4;
+        }
+        @keyframes heroPanelSweep {
+            0%   { left: -80%; }
+            50%  { left: 130%; }
+            100% { left: 130%; }
+        }
+
+        /* ── PHONE CTA — FLOAT + PULSE ── */
+        @keyframes phoneFloat {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-10px); }
+        }
+        @keyframes phoneGlowPulse {
+            0%,100% { filter: drop-shadow(0 0 6px rgba(0,255,65,0.28)) drop-shadow(0 0 12px rgba(0,255,65,0.12)); }
+            50%      { filter: drop-shadow(0 0 11px rgba(0,255,65,0.44)) drop-shadow(0 0 22px rgba(0,255,65,0.20)); }
+        }
+        #phoneCTA.raised img {
+            animation: phoneFloat 3.5s ease-in-out infinite, phoneGlowPulse 4.5s ease-in-out infinite;
+        }
+        #phoneCTA:hover img {
+            animation: none !important;
+            filter: drop-shadow(0 0 14px rgba(0,255,65,0.58)) drop-shadow(0 0 28px rgba(0,255,65,0.28)) !important;
+        }
+
+        /* ═══════════════════════════════════════
+           TODD'S PEOPLE SYSTEM
+           ═══════════════════════════════════════ */
+
+        /* Sign-in trigger in header */
+        #tpHeaderBtn {
+            font-family: 'VT323', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.18em;
+            padding: 3px 12px;
+            cursor: pointer;
+            border: 1px solid rgba(192,38,211,0.5);
+            background: transparent;
+            color: rgba(192,38,211,0.75);
+            transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        #tpHeaderBtn:hover, #tpHeaderBtn.joined {
+            color: #c026d3;
+            border-color: #c026d3;
+            box-shadow: 0 0 10px rgba(192,38,211,0.4);
+        }
+        #tpHeaderBtn.joined {
+            color: #00ff41;
+            border-color: rgba(0,255,65,0.6);
+            box-shadow: 0 0 10px rgba(0,255,65,0.3);
+        }
+
+        /* Sign-in modal */
+        #tpModal {
+            font-family: 'VT323', monospace;
+        }
+        .tp-modal-box {
+            border: 1px solid rgba(192,38,211,0.7);
+            box-shadow: 0 0 40px rgba(192,38,211,0.25), 0 0 80px rgba(192,38,211,0.10), inset 0 1px 0 rgba(255,255,255,0.07);
+            background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(20,0,30,0.92) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        /* Rarity glows */
+        .rarity-common {
+            border-color: rgba(0,255,65,0.55) !important;
+            box-shadow: 0 0 10px rgba(0,255,65,0.25), inset 0 0 20px rgba(0,255,65,0.04) !important;
+        }
+        .rarity-rare {
+            border-color: rgba(123,143,245,0.65) !important;
+            box-shadow: 0 0 14px rgba(123,143,245,0.35), inset 0 0 20px rgba(123,143,245,0.06) !important;
+        }
+        .rarity-legendary {
+            border-color: rgba(255,215,0,0.65) !important;
+            box-shadow: 0 0 18px rgba(255,215,0,0.40), 0 0 36px rgba(255,215,0,0.15), inset 0 0 24px rgba(255,215,0,0.06) !important;
+        }
+        .rarity-label-common   { color: #00ff41; text-shadow: 0 0 6px rgba(0,255,65,0.5); }
+        .rarity-label-rare     { color: #7b8ff5; text-shadow: 0 0 6px rgba(123,143,245,0.5); }
+        .rarity-label-legendary{ color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.6); }
+
+        /* ── RARITY ANIMATIONS ── */
+        @keyframes legendaryPulse {
+            0%,100% { box-shadow: 0 0 10px rgba(255,215,0,0.3), 0 0 20px rgba(255,215,0,0.1), inset 0 0 16px rgba(255,215,0,0.04); }
+            50%      { box-shadow: 0 0 20px rgba(255,215,0,0.5), 0 0 40px rgba(255,215,0,0.2), inset 0 0 24px rgba(255,215,0,0.08); }
+        }
+        @keyframes rareSharp {
+            0%,100% { box-shadow: 0 0 8px rgba(123,143,245,0.3), inset 0 0 12px rgba(123,143,245,0.04); }
+            50%      { box-shadow: 0 0 16px rgba(123,143,245,0.5), inset 0 0 18px rgba(123,143,245,0.07); }
+        }
+        @keyframes cashGlow {
+            0%,100% { box-shadow: 0 0 12px rgba(255,215,0,0.35), 0 0 24px rgba(255,215,0,0.12); }
+            50%      { box-shadow: 0 0 22px rgba(255,215,0,0.55), 0 0 44px rgba(255,215,0,0.22); }
+        }
+
+        /* ── ITEM ICON EMBLEM ── */
+        .item-icon {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            position: relative;
+            border: 1px solid transparent;
+            transition: transform 0.2s, filter 0.2s;
+        }
+        .item-icon-common {
+            background: rgba(0,255,65,0.06);
+            border-color: rgba(0,255,65,0.25);
+        }
+        .item-icon-rare {
+            background: rgba(123,143,245,0.08);
+            border-color: rgba(123,143,245,0.35);
+            box-shadow: 0 0 8px rgba(123,143,245,0.2);
+            animation: rareSharp 3s ease-in-out infinite;
+        }
+        .item-icon-legendary {
+            background: rgba(255,215,0,0.07);
+            border-color: rgba(255,215,0,0.45);
+            animation: legendaryPulse 2.5s ease-in-out infinite;
+        }
+        .item-icon-cash {
+            background: rgba(255,215,0,0.09);
+            border-color: rgba(255,215,0,0.55);
+            animation: cashGlow 2s ease-in-out infinite;
+        }
+
+        /* Reward shop item */
+        .reward-item {
+            border: 1px solid transparent;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(0,0,0,0.35);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+            cursor: pointer;
+        }
+        .reward-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            background: rgba(0,0,0,0.50);
+        }
+        .reward-item:hover .item-icon { transform: scale(1.12); filter: brightness(1.3); }
+        .reward-item.owned { opacity: 0.45; cursor: default; }
+        .reward-item.owned:hover { transform: none; background: rgba(0,0,0,0.35); }
+        .reward-item.can-afford { cursor: pointer; }
+
+        /* Inventory item */
+        .inv-item {
+            border: 1px solid transparent;
+            padding: 10px 12px;
+            background: rgba(0,0,0,0.4);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+            cursor: pointer;
+        }
+        .inv-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            background: rgba(0,0,0,0.55);
+        }
+        .inv-item:hover .item-icon { transform: scale(1.12); filter: brightness(1.3); }
+
+        /* ── TRADE LOCK BADGE ── */
+        .trade-lock-badge {
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            padding: 1px 6px;
+            border: 1px solid rgba(255,100,100,0.4);
+            color: rgba(255,120,120,0.75);
+            white-space: nowrap;
+        }
+        .trade-lock-badge.unlocked {
+            border-color: rgba(0,255,65,0.3);
+            color: rgba(0,255,65,0.65);
+        }
+
+        /* ── COLLECTOR LEVEL BAR ── */
+        #collectorBar {
+            height: 3px;
+            background: rgba(192,38,211,0.12);
+            margin-top: 6px;
+            position: relative;
+        }
+        #collectorBarFill {
+            height: 100%;
+            background: linear-gradient(90deg, #c026d3, #ffd700);
+            transition: width 0.6s ease;
+            box-shadow: 0 0 6px rgba(192,38,211,0.5);
+        }
+
+        /* ── DAILY OBJECTIVES ── */
+        .daily-obj {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 0;
+            font-size: 0.78rem;
+            letter-spacing: 0.05em;
+            color: #2a5a2a;
+            border-bottom: 1px solid rgba(0,255,65,0.07);
+        }
+        .daily-obj:last-child { border-bottom: none; }
+        .daily-obj.done { color: #1a4a1a; }
+        .daily-obj .obj-check { font-size: 0.68rem; flex-shrink: 0; }
+        .daily-obj .obj-pts   { margin-left: auto; font-size: 0.7rem; color: #00ff41; white-space: nowrap; flex-shrink: 0; }
+        .daily-obj.done .obj-pts { color: #1a4a1a; text-decoration: line-through; }
+
+        /* ── COLLECTOR BENEFIT DISPLAY ── */
+        .coll-benefit-next {
+            font-size: 0.6rem;
+            color: #2a1a3a;
+            letter-spacing: 0.05em;
+            border-left: 2px solid rgba(192,38,211,0.2);
+            padding-left: 6px;
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        /* ── LEVEL ROADMAP ── */
+        .level-roadmap-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 8px;
+            margin-bottom: 3px;
+            border: 1px solid transparent;
+        }
+        .level-roadmap-row.current-level {
+            background: rgba(192,38,211,0.05);
+            border-color: rgba(192,38,211,0.2);
+        }
+        .level-roadmap-row.next-level {
+            background: rgba(255,255,255,0.02);
+            border-color: rgba(255,255,255,0.07);
+        }
+        .level-roadmap-row.locked-level {
+            opacity: 0.4;
+        }
+
+        /* ── SIGNAL VAULT PLACEHOLDER ── */
+        .signal-vault-block {
+            border: 1px solid rgba(0,255,65,0.1);
+            padding: 12px 14px;
+            background: rgba(0,0,0,0.25);
+        }
+        .vault-coming-soon {
+            font-size: 0.68rem;
+            color: #1a4a1a;
+            letter-spacing: 0.12em;
+            border: 1px solid rgba(0,255,65,0.1);
+            padding: 2px 8px;
+            display: inline-block;
+        }
+
+        /* ── INVENTORY LOCK STATE ── */
+        .inv-locked-gate {
+            border: 1px solid rgba(192,38,211,0.12);
+            padding: 16px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            margin-top: 8px;
+        }
+
+        /* ── BOOST PRODUCT ROWS ── */
+        .boost-product-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,215,0,0.18);
+            padding: 11px 14px;
+            background: rgba(255,215,0,0.03);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+        }
+        .boost-product-row:hover {
+            background: rgba(255,215,0,0.08);
+            border-color: rgba(255,215,0,0.4);
+            box-shadow: 0 0 12px rgba(255,215,0,0.1);
+        }
+        .boost-product-row.selected {
+            background: rgba(255,215,0,0.12);
+            border-color: rgba(255,215,0,0.55);
+            box-shadow: 0 0 16px rgba(255,215,0,0.18);
+        }
+        .boost-product-row.best-value {
+            border-color: rgba(255,215,0,0.32);
+        }
+
+        /* ── WALLET STATUS INDICATOR ── */
+        .wallet-dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+        .wallet-dot.connected    { background: #00ff41; box-shadow: 0 0 6px #00ff41; }
+        .wallet-dot.not-connected { background: #3a2a4a; }
+
+        .wallet-address-pill {
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            color: #00cc33;
+            border: 1px solid rgba(0,255,65,0.25);
+            padding: 2px 8px;
+            background: rgba(0,255,65,0.04);
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .wallet-address-pill:hover {
+            border-color: rgba(0,255,65,0.5);
+            color: #00ff41;
+        }
+
+        /* ── TREASURY DISPLAY ── */
+        #treasuryDisplay {
+            font-family: 'VT323', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            color: rgba(0,200,100,0.55);
+            border: 1px solid rgba(0,200,100,0.18);
+            padding: 2px 10px;
+            white-space: nowrap;
+        }
+
+        /* ── REDEMPTION STATE BADGES ── */
+        .redeem-state {
+            display: inline-block;
+            font-size: 0.58rem;
+            letter-spacing: 0.1em;
+            padding: 1px 6px;
+            border: 1px solid transparent;
+        }
+        .redeem-state-locked      { color: #4a3a5a; border-color: rgba(74,58,90,0.5); }
+        .redeem-state-requestable { color: #00ff41; border-color: rgba(0,255,65,0.4); }
+        .redeem-state-pending     { color: #ffd700; border-color: rgba(255,215,0,0.4); }
+        .redeem-state-approved    { color: #7b8ff5; border-color: rgba(123,143,245,0.5); }
+        .redeem-state-completed   { color: #3a5a3a; border-color: rgba(0,200,100,0.3); }
+
+        /* Pass active badge */
+        .pass-active-badge {
+            display: inline-block;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            padding: 1px 8px;
+            border: 1px solid rgba(255,215,0,0.5);
+            color: #ffd700;
+            text-shadow: 0 0 6px rgba(255,215,0,0.4);
+            box-shadow: 0 0 8px rgba(255,215,0,0.15);
+        }
+
+        /* ── ITEM DETAIL MODAL ── */
+        #itemDetailModal {
+            font-family: 'VT323', monospace;
+        }
+        .item-detail-box {
+            border: 1px solid rgba(192,38,211,0.6);
+            background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(10,0,18,0.96) 100%);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 0 50px rgba(192,38,211,0.18), 0 0 100px rgba(192,38,211,0.08);
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+        .item-detail-box.legendary-frame {
+            border-color: rgba(255,215,0,0.65);
+            box-shadow: 0 0 40px rgba(255,215,0,0.22), 0 0 80px rgba(255,215,0,0.1), inset 0 0 40px rgba(255,215,0,0.04);
+            animation: legendaryPulse 2.5s ease-in-out infinite;
+        }
+        .item-detail-box.cash-frame {
+            border-color: rgba(255,215,0,0.7);
+            box-shadow: 0 0 44px rgba(255,215,0,0.28), 0 0 88px rgba(255,215,0,0.12);
+            animation: cashGlow 2s ease-in-out infinite;
+        }
+        .item-detail-icon-large {
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            margin: 0 auto 16px;
+            border: 1px solid transparent;
+        }
+
+        /* Points flash */
+        @keyframes ptFlash {
+            0%   { opacity:1; transform:scale(1); }
+            30%  { opacity:1; transform:scale(1.18); color:#00ff41; }
+            100% { opacity:1; transform:scale(1); }
+        }
+        .pt-flash { animation: ptFlash 0.5s ease-out; }
+
+        /* ═══════════════════════════════════════
+           ECONOMY / DROP SYSTEM
+           ═══════════════════════════════════════ */
+
+        /* Live pool ticker in header */
+        #livePoolDisplay {
+            font-family: 'VT323', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            color: rgba(0,255,65,0.55);
+            border: 1px solid rgba(0,255,65,0.18);
+            padding: 2px 10px;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        #livePoolDisplay.bump { color: #00ff41; text-shadow: 0 0 8px rgba(0,255,65,0.6); }
+
+        /* Drop panel */
+        .drop-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(192,38,211,0.2);
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+        }
+        .drop-stat-label { font-size: 0.72rem; color: #7a4a8a; letter-spacing: 0.14em; }
+        .drop-stat-value { font-size: 1.1rem; color: #c026d3; }
+
+        /* Entry progress bar */
+        .drop-progress-wrap {
+            height: 4px;
+            background: rgba(192,38,211,0.12);
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .drop-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c026d3, #00ff41);
+            transition: width 0.4s ease;
+            box-shadow: 0 0 8px rgba(192,38,211,0.5);
+        }
+
+        /* Enter drop button with pulse */
+        .enter-drop-btn {
+            border: 1px solid rgba(192,38,211,0.6);
+            color: #c026d3;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            letter-spacing: 0.16em;
+            padding: 10px 0;
+            width: 100%;
+            background: rgba(192,38,211,0.06);
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+            animation: dropBtnPulse 3s ease-in-out infinite;
+        }
+        @keyframes dropBtnPulse {
+            0%,100% { box-shadow: 0 0 8px rgba(192,38,211,0.2); }
+            50%      { box-shadow: 0 0 18px rgba(192,38,211,0.45), 0 0 36px rgba(192,38,211,0.15); }
+        }
+        .enter-drop-btn:hover {
+            background: rgba(192,38,211,0.18);
+            box-shadow: 0 0 22px rgba(192,38,211,0.5);
+            color: #fff;
+            animation: none;
+        }
+        .enter-drop-btn:disabled {
+            opacity: 0.4;
+            cursor: default;
+            animation: none;
+            box-shadow: none;
+        }
+
+        /* Winner badge */
+        .winner-badge {
+            border: 1px solid rgba(255,215,0,0.6);
+            background: rgba(255,215,0,0.06);
+            color: #ffd700;
+            text-shadow: 0 0 8px rgba(255,215,0,0.5);
+            padding: 10px 14px;
+            text-align: center;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            animation: winnerGlow 2s ease-in-out infinite;
+        }
+        @keyframes winnerGlow {
+            0%,100% { box-shadow: 0 0 12px rgba(255,215,0,0.2); }
+            50%      { box-shadow: 0 0 24px rgba(255,215,0,0.5), 0 0 48px rgba(255,215,0,0.2); }
+        }
+
+        /* Countdown */
+        #dropCountdown {
+            font-size: 1.4rem;
+            color: #c026d3;
+            letter-spacing: 0.12em;
+            text-shadow: 0 0 8px rgba(192,38,211,0.4);
+        }
+        #dropCountdown.urgent { color: #ff4444; text-shadow: 0 0 8px rgba(255,68,68,0.6); }
+
+        /* Boost button (Stripe placeholder) */
+        .boost-btn {
+            border: 1px solid rgba(255,215,0,0.25);
+            color: rgba(255,215,0,0.45);
+            font-family: 'VT323', monospace;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            padding: 6px 0;
+            width: 100%;
+            background: transparent;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .boost-btn:hover {
+            color: rgba(255,215,0,0.8);
+            border-color: rgba(255,215,0,0.5);
+            box-shadow: 0 0 10px rgba(255,215,0,0.15);
+        }
+
+        /* ── TOOLTIP ── */
+        .tooltip-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px; height: 18px;
+            margin-left: 7px;
+            border: 1px solid rgba(192,38,211,0.5);
+            border-radius: 50%;
+            font-size: 0.65rem;
+            color: rgba(192,38,211,0.7);
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+        .tooltip-icon:hover, .tooltip-icon.active {
+            border-color: #c026d3;
+            color: #c026d3;
+            box-shadow: 0 0 8px rgba(192,38,211,0.5);
+        }
+        .tooltip-bubble {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            width: 220px;
+            background: rgba(10,0,18,0.95);
+            border: 1px solid rgba(192,38,211,0.5);
+            box-shadow: 0 0 16px rgba(192,38,211,0.25);
+            padding: 8px 10px;
+            font-family: 'VT323', monospace;
+            font-size: 0.82rem;
+            color: #c0a0d0;
+            letter-spacing: 0.04em;
+            line-height: 1.4;
+            z-index: 200;
+            pointer-events: none;
+        }
+        .tooltip-wrap:hover .tooltip-bubble,
+        .tooltip-icon.active + .tooltip-bubble {
+            display: block;
+        }
+
+        /* ═══════════════════════════════════════
+           INTRO OVERLAY — VIDEO BOOT SEQUENCE
+           ═══════════════════════════════════════ */
+        #introOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Full-cover video */
+        #introVideo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            opacity: 0.88;
+        }
+
+        /* Purple/green glow tint */
+        #introGlow {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background:
+                radial-gradient(ellipse at 28% 50%, rgba(192,38,211,0.14) 0%, transparent 55%),
+                radial-gradient(ellipse at 72% 50%, rgba(0,255,65,0.07) 0%, transparent 55%);
+            pointer-events: none;
+        }
+
+        /* CRT scanline mesh */
+        #introScanlines {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.10) 2px,
+                rgba(0,0,0,0.10) 4px
+            );
+            pointer-events: none;
+            animation: scanMove 10s linear infinite;
+        }
+        @keyframes scanMove {
+            0%   { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        /* "TRANSMISSION INITIALIZING..." text */
+        #introText {
+            position: absolute;
+            bottom: 72px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4;
+            font-family: 'VT323', monospace;
+            font-size: clamp(1.1rem, 3.2vw, 1.9rem);
+            letter-spacing: 0.32em;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41, 0 0 22px rgba(0,255,65,0.5);
+            white-space: nowrap;
+            animation: textFlicker 2.4s ease-in-out infinite;
+        }
+        @keyframes textFlicker {
+            0%,100% { opacity: 1; }
+            7%       { opacity: 0.55; }
+            9%       { opacity: 1; }
+            51%      { opacity: 0.85; }
+            53%      { opacity: 0.4; }
+            55%      { opacity: 1; }
+        }
+
+        /* Skip button */
+        #introSkip {
+            position: absolute;
+            bottom: 20px; right: 22px;
+            z-index: 5;
+            font-family: 'VT323', monospace;
+            font-size: 0.82rem;
+            letter-spacing: 0.22em;
+            color: #2a2a2a;
+            border: 1px solid #1e1e1e;
+            background: transparent;
+            padding: 4px 16px;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s, text-shadow 0.2s;
+        }
+        #introSkip:hover {
+            color: #00ff41;
+            border-color: #00ff41;
+            text-shadow: 0 0 8px #00ff41;
+        }
+
+        /* Fade-out transition */
+        #introOverlay.fade-out {
+            animation: overlayOut 0.65s ease-in forwards;
+            pointer-events: none;
+        }
+        @keyframes overlayOut {
+            0%   { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* ═══════════════════════════════════════
+           PHONE CTA — TUCKED / HOVER BEHAVIOR
+           ═══════════════════════════════════════ */
+        #phoneCTA {
+            position: fixed;
+            bottom: -280px;
+            left: 22px;
+            z-index: 40;
+            cursor: pointer;
+            width: 140px;
+            transition: bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                        opacity 0.5s ease;
+            opacity: 0;
+        }
+        /* tucked state — just a sliver visible at bottom-left so user knows it's there */
+        #phoneCTA.tucked {
+            bottom: -112px;
+            opacity: 0.6;
+        }
+        /* raised state — only while hovering */
+        #phoneCTA.raised {
+            bottom: 22px;
+            opacity: 1;
+        }
+        #phoneCTA img {
+            width: 100%;
+            display: block;
+            transition: filter 0.35s;
+        }
+        #phoneCTALabel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'VT323', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            color: #00ff41;
+            text-shadow: 0 0 8px #00ff41, 0 0 16px rgba(0,255,65,0.5);
+            text-align: center;
+            white-space: nowrap;
+            line-height: 1.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+<!-- ══════════════ GALAXY BACKGROUND ══════════════ -->
+<div id="galaxy-bg">
+    <div class="stars-sm"></div>
+    <div class="stars-lg"></div>
+    <div class="nebula-1"></div>
+    <div class="nebula-2"></div>
+    <div class="nebula-3"></div>
+</div>
+
+<!-- ══════════════ MAIN BACKGROUND VIDEO ══════════════ -->
+<div id="mainbg-wrap">
+    <div id="mainbg-overlay"></div>
+</div>
+
+<!-- ══════════════ INTRO OVERLAY (VIDEO) ══════════════ -->
+<div id="introOverlay" style="display:none;">
+    <video id="introVideo" autoplay muted loop playsinline>
+        <source src="images/intro.mp4" type="video/mp4">
+    </video>
+    <div id="introGlow"></div>
+    <div id="introScanlines"></div>
+    <div id="introText">TRANSMISSION INITIALIZING...</div>
+    <button id="introSkip">SKIP</button>
+</div>
+<script>
+    if (!sessionStorage.getItem('intro_seen')) {
+        var ol = document.getElementById('introOverlay');
+        ol.style.display = 'flex';
+        // Explicitly trigger playback — required after display:none reveal
+        var iv = document.getElementById('introVideo');
+        if (iv) { iv.play().catch(function(){}); }
+    }
+</script>
+
+<!-- ══════════════ PHONE CTA ══════════════ -->
+<div id="phoneCTA" onclick="openContactModal()">
+    <img src="images/phone.png" alt="Contact">
+    <div id="phoneCTALabel">WANT TO<br>WORK?</div>
+</div>
+
+<div class="max-w-7xl mx-auto">
+
+    <!-- ── HEADER BAR ── -->
+    <div class="header-bar mb-6">
+        <span class="live-dot" style="margin-right:10px; flex-shrink:0;"></span>
+        <span style="font-size:1.05rem; letter-spacing:0.18em; color:#00ff41; text-shadow: 0 0 8px #00ff41, 0 0 16px rgba(0,255,65,0.4); flex:1; text-align:center;">TODD IS WORKING WHAT ARE YOU DOING HERE</span>
+        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            <div id="livePoolDisplay">POOL: $0.00</div>
+            <button id="tpHeaderBtn" onclick="openTPModal()">JOIN TODD'S PEOPLE</button>
+        </div>
+    </div>
+
+    <!-- ══════════════ HERO — FULL WIDTH ══════════════ -->
+    <div class="glass-panel glass-ice hero-sweep p-8 mb-6 text-center" style="background:#000 !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;">
+        <div class="text-sm tracking-widest mb-3 neon-green">// PROFILE LOADED // SYS ONLINE</div>
+        <h2 class="title-purple hero-title tracking-widest" style="font-size:clamp(3.5rem,10vw,7rem); line-height:1; letter-spacing:0.12em;">AJORDAN</h2>
+        <p class="mt-3 neon-green" style="font-size:0.95rem; letter-spacing:0.2em;">@AJORDANWEB3 &nbsp;•&nbsp; CREATIVE DIRECTOR &nbsp;•&nbsp; NYC</p>
+        <p class="mt-4" style="font-size:1.1rem; color:#c8c0d8; letter-spacing:0.1em; opacity:0.88;">I build ideas that actually move people.</p>
+        <div class="mt-4 inline-block text-sm neon-green" style="border:1px solid rgba(0,255,65,0.35); padding:6px 18px; opacity:0.75; letter-spacing:0.16em;">
+            SYS://UNIT_ACTIVE — NO_SLEEP — NO_QUIT — EXECUTE_NOW
+        </div>
+    </div>
+
+    <!-- ══════════════ 2-COLUMN MAIN ══════════════ -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- ── LEFT: PROFILE ── -->
+        <div class="lg:col-span-4 glass-panel glass-purple glass-left p-6 text-center">
+
+            <img src="images/catmain.png" alt="AJORDAN"
+                 class="w-full mb-6"
+                 style="border: 2px solid rgba(192,38,211,0.7); box-shadow: 0 0 18px rgba(192,38,211,0.45), inset 0 0 20px rgba(192,38,211,0.1);">
+
+            <h1 class="text-5xl title-purple tracking-widest">AJORDAN ★</h1>
+
+            <div class="mt-6 space-y-2" style="font-size:1.12rem;">
+                <div class="neon-green">› solana trencher</div>
+                <div class="neon-green">› creative director</div>
+                <div class="neon-green">› media manager</div>
+            </div>
+
+            <div class="mt-6" style="border-top:1px solid rgba(192,38,211,0.25); padding-top:14px; text-align:left;">
+                <div class="neon-purple tracking-wider mb-3" style="font-size:0.85rem; letter-spacing:0.2em;">// SKILLS</div>
+                <div class="space-y-1" style="font-size:1rem;">
+                    <div class="neon-green">› media assistance</div>
+                    <div class="neon-green">› community growth</div>
+                    <div class="neon-green">› video editing</div>
+                    <div class="neon-green">› therapeutic nature</div>
+                </div>
+            </div>
+
+            <div class="mt-6" style="border-top:1px solid rgba(192,38,211,0.2); padding-top:16px; text-align:left;">
+                <div style="font-size:0.95rem; color:#c8c0d8; line-height:1.55; letter-spacing:0.03em; margin-bottom:12px;">
+                    I turn ideas into motion, break creative blocks, and build communities that move.
+                </div>
+                <div style="font-size:0.85rem; color:#8a7a9a; line-height:1.8; letter-spacing:0.04em; border-left:2px solid rgba(192,38,211,0.35); padding-left:10px;">
+                    › Lock in a clear creative direction<br>
+                    › Break through stalled ideas fast<br>
+                    › Turn concepts into real execution<br>
+                    › Build a community people stay for
+                </div>
+            </div>
+
+            <div class="mt-6" style="border-top:1px solid rgba(192,38,211,0.2); padding-top:14px; text-align:left;">
+                <div class="neon-purple tracking-wider mb-3" style="font-size:0.85rem; letter-spacing:0.2em;">// PROJECTS //</div>
+                <div style="font-size:0.95rem; color:#8a7a9a; letter-spacing:0.04em; line-height:1.6;">
+                    Future work and projects will live here.
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RIGHT: CONTENT STACK ── -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+
+            <!-- POPULAR POST -->
+            <div class="glass-panel glass-ice p-6">
+                <div class="mb-4 flex items-center gap-3">
+                    <span class="text-base tracking-widest neon-green">// POPULAR POST</span>
+                    <span class="badge" style="background:#c026d3; color:#000; font-family:'VT323',monospace;">TRENDING</span>
+                </div>
+
+                <div class="post-card p-4">
+                    <div class="text-xs neon-green mb-3 tracking-wider">@AJORDANWEB3 // VIRAL TRANSMISSION</div>
+                    <p class="mb-5 leading-snug" style="color:#e0e0e0; font-size:1.05rem;">
+                        watch Todd push a community of mask cats all around Manhattan
+                    </p>
+
+                    <div id="tweet-container" class="mb-4">
+                        <blockquote class="twitter-tweet" data-theme="dark" data-dnt="true" data-width="100%">
+                            <a href="https://x.com/ajordanweb3/status/1954282878285849067"></a>
+                        </blockquote>
+                    </div>
+
+                    <div id="post-card-fallback" class="hidden mb-4 p-4"
+                         style="border:1px solid #1a3a1a; background:rgba(2,10,2,0.7);">
+                        <div class="text-xs neon-green mb-2">// X POST // @AJORDANWEB3 // VIDEO</div>
+                        <div style="color:#9ca3af; font-size:0.9rem;">[ VIDEO CONTENT — CLICK TO VIEW ON X ]</div>
+                    </div>
+
+                    <a href="https://x.com/ajordanweb3/status/1954282878285849067"
+                       target="_blank" rel="noopener noreferrer"
+                       onclick="trackClick('popular_post')"
+                       class="btn-green block w-full text-center py-2 text-base tracking-widest"
+                       style="font-family:'VT323',monospace;">
+                        WATCH POST ↗
+                    </a>
+                </div>
+            </div>
+
+            <!-- CREATIVE DIRECTOR PROFILE -->
+            <div class="glass-panel glass-purple p-6">
+                <div class="text-base mb-3 neon-purple tracking-wider">// CREATIVE DIRECTOR PROFILE</div>
+                <div class="leading-relaxed" style="color:#d0d0d0; font-size:1.12rem; font-weight:600;">
+                    TODD A JORDAN — CREATIVE DIRECTOR &amp; MEDIA STRATEGIST<br><br>
+                    NYC-based Creative Director specializing in high-impact content architecture.
+                    I excel at <span class="highlight-purple">creative directing</span> — turning raw chaotic energy
+                    into sharp, viral campaigns that cut through the noise. As a professional Content Manager
+                    and Media Strategist, I help X creators, KOLs, and Web3 builders scale their brands with
+                    strategic storytelling, meme warfare, and polished execution.
+                </div>
+                <button onclick="openContactModal()"
+                        class="btn-purple mt-6 w-full py-3 text-lg tracking-widest"
+                        style="font-family:'VT323',monospace;">
+                    CONTACT TODD
+                </button>
+            </div>
+
+            <!-- LIVE FEED -->
+            <div class="glass-panel glass-purple p-6">
+                <div class="mb-3 flex items-center">
+                    <span class="live-dot"></span>
+                    <span class="text-base neon-purple tracking-wider">// LIVE FEED</span>
+                </div>
+                <div class="text-xs mb-4" style="color:#7a4a8a; letter-spacing:0.1em;">
+                    @AJORDANWEB3 — MAIN FEED // AUTO-UPDATED
+                </div>
+                <div class="feed-scroll" id="feedContainer">
+                    <!-- rendered by JS -->
+                </div>
+            </div>
+
+            <!-- VISITOR REVIEWS -->
+            <div class="glass-panel glass-purple p-6">
+                <div class="text-base mb-2 neon-purple tracking-wider">// VISITOR REVIEWS</div>
+                <div class="text-sm mb-3" style="color:#9a7aaa;">
+                    Leave a short review about any interaction with Todd.
+                </div>
+                <textarea id="reviewInput" rows="2"
+                    class="w-full border border-[#c026d3] p-3 text-base mb-2 resize-none"
+                    style="background:rgba(0,0,0,0.6);"
+                    placeholder="Your review..."></textarea>
+                <button onclick="submitReview()"
+                        class="btn-purple w-full py-2 text-base tracking-widest mb-4"
+                        style="font-family:'VT323',monospace;">
+                    SUBMIT REVIEW
+                </button>
+                <div class="reviews-scroll" id="reviewsList">
+                    <div style="color:#4a1a5a; font-size:0.9rem;">NO REVIEWS YET. BE FIRST.</div>
+                </div>
+            </div>
+
+        </div><!-- end right stack -->
+
+    </div><!-- end grid -->
+
+    <!-- ══════════════ TODD'S PEOPLE SYSTEM ══════════════ -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6" id="tpSystemRow">
+
+        <!-- PEOPLE PANEL -->
+        <div class="glass-panel glass-purple p-6" id="tpPeoplePanel">
+            <div class="text-base mb-4 neon-purple tracking-wider">// TODD'S PEOPLE //</div>
+
+            <!-- Logged-out state -->
+            <div id="tpLoggedOut">
+                <div style="color:#9a7aaa; font-size:1rem; margin-bottom:16px; line-height:1.6;">
+                    Join Todd's inner circle. Earn points, unlock rewards, and become one of Todd's People.
+                </div>
+                <button onclick="openTPModal()"
+                        class="btn-purple w-full py-3 text-base tracking-widest"
+                        style="font-family:'VT323',monospace;">
+                    JOIN TODD'S PEOPLE ↗
+                </button>
+            </div>
+
+            <!-- Logged-in state -->
+            <div id="tpLoggedIn" style="display:none;">
+                <div class="mb-4" style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div style="font-size:1.3rem; color:#e0e0e0; margin-bottom:2px;">
+                            WELCOME, <span id="tpUsername" class="neon-green"></span>
+                        </div>
+                        <div style="font-size:0.82rem; color:#00ff41; text-shadow:0 0 6px rgba(0,255,65,0.4); letter-spacing:0.1em;">
+                            STATUS: ONE OF TODD'S PEOPLE ✓
+                        </div>
+                    </div>
+                    <button onclick="openSettingsModal()"
+                            style="background:transparent; border:1px solid rgba(192,38,211,0.35); color:rgba(192,38,211,0.6); font-family:'VT323',monospace; font-size:0.7rem; padding:3px 9px; cursor:pointer; letter-spacing:0.1em; transition:all 0.2s; flex-shrink:0; margin-top:2px;"
+                            onmouseover="this.style.color='#c026d3';this.style.borderColor='#c026d3';this.style.boxShadow='0 0 8px rgba(192,38,211,0.3)';"
+                            onmouseout="this.style.color='rgba(192,38,211,0.6)';this.style.borderColor='rgba(192,38,211,0.35)';this.style.boxShadow='none';">
+                        SETTINGS
+                    </button>
+                </div>
+
+                <div style="border:1px solid rgba(192,38,211,0.3); padding:12px 14px; margin-bottom:16px; background:rgba(0,0,0,0.3);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <div style="font-size:0.72rem; color:#7a4a8a; letter-spacing:0.15em;">// POINTS BALANCE</div>
+                        <span id="tpStreakBadge" style="display:none; font-size:0.62rem; letter-spacing:0.1em; border:1px solid; padding:1px 7px;"></span>
+                    </div>
+                    <div id="tpPoints" style="font-size:2.2rem; color:#c026d3; text-shadow:0 0 10px rgba(192,38,211,0.5); line-height:1;">0</div>
+                </div>
+
+                <div id="tpDailyBtn" style="margin-bottom:16px;">
+                    <button onclick="claimDaily()"
+                            class="btn-green w-full py-2 text-base tracking-widest"
+                            style="font-family:'VT323',monospace;">
+                        CLAIM DAILY +5 PTS
+                    </button>
+                </div>
+                <div id="tpDailyDone" style="display:none; margin-bottom:12px; text-align:center;">
+                    <div style="font-size:0.78rem; color:#4a8a4a; letter-spacing:0.1em; margin-bottom:4px;">DAILY REWARD CLAIMED ✓</div>
+                    <div style="font-size:0.72rem; color:#3a5a3a; letter-spacing:0.1em;">NEXT REWARD IN <span id="dailyCooldown" style="color:#5a9a5a;">--:--:--</span></div>
+                </div>
+
+                <!-- Daily objectives panel -->
+                <div id="dailyObjPanel" style="margin-bottom:16px; border:1px solid rgba(0,255,65,0.1); padding:10px 12px; background:rgba(0,0,0,0.2);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <div style="font-size:0.62rem; color:#2a4a2a; letter-spacing:0.15em;">// DAILY OBJECTIVES</div>
+                        <div id="dailyObjBonus" style="display:none; font-size:0.62rem; color:#00ff41; letter-spacing:0.1em; border:1px solid rgba(0,255,65,0.3); padding:1px 7px;">ALL DONE +2 ✓</div>
+                    </div>
+                    <div id="dailyObjList"></div>
+                    <div style="font-size:0.58rem; color:#1a3a1a; letter-spacing:0.06em; margin-top:8px; line-height:1.4;">Complete all objectives for a +2 pt bonus. Resets daily.</div>
+                </div>
+
+                <div style="border-top:1px solid rgba(192,38,211,0.2); padding-top:14px;">
+                    <div style="font-size:0.72rem; color:#7a4a8a; letter-spacing:0.15em; margin-bottom:6px;">// REWARD SHOP</div>
+                    <div style="font-size:0.6rem; color:#2a1a3a; letter-spacing:0.04em; margin-bottom:10px; line-height:1.5;">Items provide real account benefits. Points are not money. Ownership is not a guaranteed outcome.</div>
+                    <div id="tpShop"></div>
+                    <div id="tpShopMsg" style="display:none; font-size:0.78rem; letter-spacing:0.08em; margin-top:6px; text-align:right;"></div>
+                </div>
+
+                <div style="border-top:1px solid rgba(192,38,211,0.15); padding-top:12px; margin-top:12px;">
+                    <div style="font-size:0.68rem; color:#5a3a6a; letter-spacing:0.15em; margin-bottom:8px;">// RECENT ACTIVITY</div>
+                    <div id="tpPointsHistory"></div>
+                </div>
+
+                <!-- Signal Vault block -->
+                <div style="border-top:1px solid rgba(0,255,65,0.08); padding-top:12px; margin-top:12px;">
+                    <div style="font-size:0.62rem; color:#1a3a1a; letter-spacing:0.15em; margin-bottom:8px;">// SIGNAL VAULT</div>
+                    <div class="signal-vault-block">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <div style="font-size:0.9rem; color:#2a5a2a; letter-spacing:0.08em;">⬡ VAULT</div>
+                            <span class="vault-coming-soon">COMING SOON</span>
+                        </div>
+                        <div style="font-size:0.7rem; color:#1a3a1a; letter-spacing:0.05em; line-height:1.6;">
+                            A Solana wallet will be automatically generated for your account in a future update. Personal wallet connection is not required.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monetization row -->
+                <div style="border-top:1px solid rgba(192,38,211,0.15); padding-top:14px; margin-top:14px;">
+                    <div style="font-size:0.62rem; color:#3a2a4a; letter-spacing:0.15em; margin-bottom:10px;">// UPGRADE</div>
+
+                    <!-- Premium pass status / CTA -->
+                    <div id="passStatusBlock" style="border:1px solid rgba(255,215,0,0.15); padding:10px 12px; background:rgba(255,215,0,0.03); margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-size:0.62rem; color:#5a4a2a; letter-spacing:0.12em; margin-bottom:2px;">DROP PASS</div>
+                                <div id="passStatusInline" style="font-size:0.88rem; color:#5a4a2a;">NOT ACTIVE</div>
+                            </div>
+                            <button id="passInlineBtn" onclick="openBoostModal(); switchBoostTab('pass');"
+                                    style="background:transparent;border:1px solid rgba(255,215,0,0.3);color:rgba(255,215,0,0.6);font-family:'VT323',monospace;font-size:0.72rem;padding:4px 12px;cursor:pointer;letter-spacing:0.1em;flex-shrink:0;transition:all 0.2s;"
+                                    onmouseover="this.style.color='#ffd700';this.style.borderColor='#ffd700';"
+                                    onmouseout="this.style.color='rgba(255,215,0,0.6)';this.style.borderColor='rgba(255,215,0,0.3)';">
+                                ACTIVATE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Boost points CTA -->
+                    <button onclick="openBoostModal(); switchBoostTab('pts');"
+                            style="width:100%;background:transparent;border:1px solid rgba(255,215,0,0.2);color:rgba(255,215,0,0.55);font-family:'VT323',monospace;font-size:0.82rem;padding:8px 0;cursor:pointer;letter-spacing:0.14em;transition:all 0.2s;"
+                            onmouseover="this.style.color='#ffd700';this.style.borderColor='rgba(255,215,0,0.5)';"
+                            onmouseout="this.style.color='rgba(255,215,0,0.55)';this.style.borderColor='rgba(255,215,0,0.2)';">
+                        ⚡ BOOST POINTS
+                    </button>
+                </div>
+
+                <button onclick="tpLogout()"
+                        style="margin-top:10px; background:transparent; border:1px solid #1a1a1a; color:#2a2a2a; font-family:'VT323',monospace; font-size:0.72rem; padding:3px 10px; cursor:pointer; letter-spacing:0.12em; transition:color 0.2s, border-color 0.2s;"
+                        onmouseover="this.style.color='#c026d3';this.style.borderColor='#c026d3';"
+                        onmouseout="this.style.color='#2a2a2a';this.style.borderColor='#1a1a1a';">
+                    SIGN OUT
+                </button>
+            </div>
+        </div>
+
+        <!-- INVENTORY PANEL -->
+        <div class="glass-panel glass-purple p-6" id="tpInventoryPanel">
+            <div class="text-base mb-4 neon-purple tracking-wider">// INVENTORY //</div>
+
+            <div id="tpInvLoggedOut" style="color:#9a7aaa; font-size:0.95rem;">
+                Sign in to view your inventory.
+            </div>
+
+            <div id="tpInvLoggedIn" style="display:none;">
+                <!-- Collector level block -->
+                <div style="border:1px solid rgba(192,38,211,0.2); padding:10px 12px; margin-bottom:10px; background:rgba(0,0,0,0.3);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-size:0.62rem; color:#5a3a6a; letter-spacing:0.14em; margin-bottom:2px;">// COLLECTOR LEVEL</div>
+                            <div id="collectorLevelLabel" style="font-size:1.1rem; color:#c026d3;">LVL 0 — NEWCOMER</div>
+                        </div>
+                        <span id="tpInvCount" style="font-size:0.68rem; color:#5a3a6a; letter-spacing:0.1em;">0 ITEMS</span>
+                    </div>
+                    <div id="collectorBar"><div id="collectorBarFill" style="width:0%;"></div></div>
+                    <div id="collectorBreakdown" style="display:flex; gap:12px; margin-top:6px; font-size:0.62rem; color:#4a2a5a; letter-spacing:0.1em;"></div>
+                    <div id="collectorBenefitRow" class="coll-benefit-next"></div>
+                </div>
+
+                <!-- Level roadmap -->
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:0.62rem; color:#3a2a4a; letter-spacing:0.15em; margin-bottom:8px;">// PROGRESSION ROADMAP</div>
+                    <div id="levelRoadmap"></div>
+                </div>
+
+                <!-- Inventory items (gated at LVL 0) -->
+                <div id="tpInvGate">
+                    <div style="font-size:0.72rem; color:#5a3a6a; letter-spacing:0.1em; margin-bottom:8px;">
+                        @<span class="tp-inv-user" style="color:#7a4a8a;"></span> — COLLECTED ITEMS
+                    </div>
+                    <div id="tpInventoryList"></div>
+                    <div id="tpInvEmpty" style="display:none;">
+                        <div class="inv-locked-gate">
+                            <div style="font-size:1rem; color:#3a2a4a; letter-spacing:0.12em; margin-bottom:6px;">NO ITEMS YET</div>
+                            <div style="font-size:0.72rem; color:#2a1a3a; line-height:1.6;">Spend points in the Reward Shop to earn your first item and unlock Collector Level 1.</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tpInvLockedMsg" style="display:none;">
+                    <div class="inv-locked-gate">
+                        <div style="font-size:0.9rem; color:#3a1a4a; letter-spacing:0.12em; margin-bottom:6px;">⬡ INVENTORY LOCKED</div>
+                        <div style="font-size:0.72rem; color:#2a1a2a; line-height:1.6; margin-bottom:8px;">Earn your first item from the Reward Shop to reach <span style="color:#00ff41;">Collector Level 1</span> and unlock your inventory.</div>
+                        <div style="font-size:0.62rem; color:#1a1a2a; letter-spacing:0.1em;">UNLOCKS AT COLLECTOR LEVEL 1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end people system row -->
+
+    <!-- ══════════════ EARN MORE PANEL ══════════════ -->
+    <div class="glass-panel glass-green mt-6 p-6" id="earnPanel">
+        <div class="neon-green tracking-wider mb-4" style="font-size:1rem;">// EARN MORE POINTS //</div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+            <!-- Daily login -->
+            <div style="border:1px solid rgba(0,255,65,0.2); padding:14px; background:rgba(0,0,0,0.3);">
+                <div style="font-size:0.7rem; color:#4a8a4a; letter-spacing:0.14em; margin-bottom:6px;">// DAILY LOGIN</div>
+                <div style="font-size:1rem; color:#c8e8c8; margin-bottom:6px;">+5 PTS base every 24h</div>
+                <div style="font-size:0.78rem; color:#6a9a6a; margin-bottom:8px;">Sign in daily and claim. Streaks, Pass, and Collector Level all stack bonus points on top of the base.</div>
+                <div style="font-size:0.68rem; color:#2a5a2a; letter-spacing:0.1em;">
+                    3d streak: +1 · 7d: +3 · 30d: +5
+                </div>
+            </div>
+
+            <!-- Live sponsor task -->
+            <div id="sponsorTaskPanel" style="border:1px solid rgba(0,255,65,0.2); padding:14px; background:rgba(0,0,0,0.3);">
+                <div style="font-size:0.7rem; color:#4a8a4a; letter-spacing:0.14em; margin-bottom:6px;">// PARTNER TASK</div>
+                <div style="font-size:1rem; color:#c8e8c8; margin-bottom:6px;">+5 PTS</div>
+                <div id="sponsorTaskDesc" style="font-size:0.78rem; color:#6a9a6a; margin-bottom:10px; line-height:1.5;">
+                    Check out a featured creator and earn points for your attention.
+                </div>
+                <div id="sponsorTaskAction">
+                    <button id="sponsorTaskBtn" onclick="claimSponsorTask()"
+                            style="background:transparent;border:1px solid rgba(0,255,65,0.4);color:#00ff41;font-family:'VT323',monospace;font-size:0.82rem;padding:5px 14px;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;width:100%;"
+                            onmouseover="this.style.background='rgba(0,255,65,0.08)';"
+                            onmouseout="this.style.background='transparent';">
+                        VISIT PARTNER ↗
+                    </button>
+                    <div id="sponsorDone" style="display:none; font-size:0.72rem; color:#2a7a2a; letter-spacing:0.1em; margin-top:6px; text-align:center;">
+                        ✓ CLAIMED TODAY
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium pass promo / status -->
+            <div id="passPromoPanel" style="border:1px solid rgba(255,215,0,0.2); padding:14px; background:rgba(255,215,0,0.03);">
+                <div style="font-size:0.7rem; color:#6a5a2a; letter-spacing:0.14em; margin-bottom:6px;">// DROP PASS</div>
+                <div id="passPromoContent">
+                    <div style="font-size:1rem; color:#d4c080; margin-bottom:6px;">$4.99 / month</div>
+                    <div style="font-size:0.78rem; color:#7a6a3a; margin-bottom:10px; line-height:1.5;">
+                        Free daily entry · +3 pts/day · Pass drops · Priority window
+                    </div>
+                    <button onclick="openBoostModal(); switchBoostTab('pass');"
+                            style="background:transparent;border:1px solid rgba(255,215,0,0.35);color:rgba(255,215,0,0.7);font-family:'VT323',monospace;font-size:0.82rem;padding:5px 14px;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;width:100%;"
+                            onmouseover="this.style.color='#ffd700';this.style.borderColor='#ffd700';"
+                            onmouseout="this.style.color='rgba(255,215,0,0.7)';this.style.borderColor='rgba(255,215,0,0.35)';">
+                        LEARN MORE ↗
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══════════════ LIVE DROP SYSTEM ══════════════ -->
+    <div class="glass-panel glass-purple mt-6 p-6" id="dropSystemPanel">
+        <div class="flex items-center justify-between mb-5">
+            <div class="neon-purple tracking-wider" style="font-size:1rem;">// LIVE DROP SYSTEM //</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div id="treasuryDisplay" style="display:none;">TREASURY: $0.00 USDC</div>
+                <span class="live-dot"></span>
+                <span style="font-size:0.72rem; color:#7a4a8a; letter-spacing:0.12em;">LIVE</span>
+            </div>
+        </div>
+
+        <!-- Drop content (rendered by JS) -->
+        <div id="dropContent">
+            <div style="color:#4a2a5a; font-size:0.9rem; letter-spacing:0.1em;">LOADING DROP...</div>
+        </div>
+        <div style="margin-top:12px; font-size:0.6rem; color:#2a1a3a; letter-spacing:0.05em; line-height:1.5; border-top:1px solid rgba(192,38,211,0.08); padding-top:8px;">
+            Drop entries cost points. Winners are selected when a drop fills — no guaranteed outcome. Points are engagement rewards, not currency.
+        </div>
+    </div>
+
+</div><!-- end max-w -->
+
+<!-- ══════════════ BOOST MODAL ══════════════ -->
+<div id="boostModal" class="hidden fixed inset-0 flex items-center justify-center z-50"
+     style="background:rgba(0,0,0,0.94); padding:16px; font-family:'VT323',monospace;">
+    <div class="tp-modal-box w-full max-w-sm p-8" style="border-color:rgba(255,215,0,0.45); box-shadow:0 0 44px rgba(255,215,0,0.14),0 0 88px rgba(255,215,0,0.06); position:relative;">
+        <button onclick="closeBoostModal()" style="position:absolute;top:12px;right:16px;color:#ffd700;background:none;border:none;cursor:pointer;font-size:1.8rem;line-height:1;">×</button>
+
+        <!-- Tab selector -->
+        <div style="display:flex; gap:0; margin-bottom:20px; border:1px solid rgba(255,215,0,0.2);">
+            <button id="boostTabPts" onclick="switchBoostTab('pts')"
+                    style="flex:1;padding:8px;font-family:'VT323',monospace;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;border:none;background:rgba(255,215,0,0.1);color:#ffd700;border-right:1px solid rgba(255,215,0,0.2);">
+                ⚡ BOOST POINTS
+            </button>
+            <button id="boostTabPass" onclick="switchBoostTab('pass')"
+                    style="flex:1;padding:8px;font-family:'VT323',monospace;font-size:0.85rem;letter-spacing:0.1em;cursor:pointer;border:none;background:transparent;color:#5a4a2a;">
+                ★ DROP PASS
+            </button>
+        </div>
+
+        <!-- POINTS TAB -->
+        <div id="boostPtsTab">
+            <div style="font-size:0.78rem; color:#7a6a4a; line-height:1.55; margin-bottom:16px; letter-spacing:0.04em;">
+                Points unlock entries, items, and access. More points means faster progression — enter more drops, unlock more rewards, reach higher collector levels sooner.
+            </div>
+            <div id="boostPtsList" class="space-y-3"></div>
+            <div id="boostPtsConfirm" style="display:none; margin-top:14px; border:1px solid rgba(0,255,65,0.3); padding:12px; text-align:center;">
+                <div style="color:#00ff41; font-size:0.9rem; letter-spacing:0.1em; margin-bottom:8px;" id="boostPtsConfirmMsg"></div>
+                <div style="display:flex; gap:8px; justify-content:center;">
+                    <button onclick="confirmBoostPurchase()"
+                            style="background:rgba(0,255,65,0.1);border:1px solid rgba(0,255,65,0.5);color:#00ff41;font-family:'VT323',monospace;font-size:0.85rem;padding:6px 18px;cursor:pointer;letter-spacing:0.1em;">
+                        CONFIRM
+                    </button>
+                    <button onclick="cancelBoostPurchase()"
+                            style="background:transparent;border:1px solid rgba(192,38,211,0.3);color:#6a3a7a;font-family:'VT323',monospace;font-size:0.85rem;padding:6px 18px;cursor:pointer;">
+                        CANCEL
+                    </button>
+                </div>
+            </div>
+            <div style="margin-top:14px; font-size:0.62rem; color:#3a2a1a; letter-spacing:0.1em; text-align:center;">
+                REAL PAYMENT REQUIRES STRIPE — CURRENTLY SIMULATED FOR TESTING
+            </div>
+        </div>
+
+        <!-- PREMIUM PASS TAB -->
+        <div id="boostPassTab" style="display:none;">
+            <div style="text-align:center; margin-bottom:14px;">
+                <div style="font-size:1.4rem; color:#ffd700; text-shadow:0 0 12px rgba(255,215,0,0.5); letter-spacing:0.14em; margin-bottom:4px;">DROP PASS</div>
+                <div style="font-size:0.72rem; color:#5a4a2a; letter-spacing:0.12em;">PREMIUM MONTHLY ACCESS</div>
+            </div>
+            <div style="border:1px solid rgba(255,215,0,0.3); padding:14px; background:rgba(255,215,0,0.04); margin-bottom:14px;">
+                <div style="font-size:0.68rem; color:#5a4a2a; letter-spacing:0.14em; margin-bottom:10px;">// PASS BENEFITS</div>
+                <div class="space-y-2" style="font-size:0.88rem; color:#c8c0a0; letter-spacing:0.04em; line-height:1.7;">
+                    <div>★ 1 free drop entry every 24h — no points spent</div>
+                    <div>★ +10 bonus points on activation</div>
+                    <div>★ +3 pts on every daily claim — compounding advantage</div>
+                    <div>★ Priority entry window — 30s before general access</div>
+                    <div>★ Pass-exclusive drops not open to free members</div>
+                    <div>★ Pass badge marks your account as premium tier</div>
+                </div>
+                <div style="font-size:0.62rem; color:#3a2a1a; letter-spacing:0.06em; margin-top:10px; line-height:1.5; border-top:1px solid rgba(255,215,0,0.1); padding-top:8px;">
+                    Pass provides access advantages, not guaranteed wins. Drop outcomes depend on competition and timing.
+                </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,215,0,0.25); padding:12px; margin-bottom:14px; background:rgba(255,215,0,0.05);">
+                <span style="font-size:1.05rem; color:#e0e0e0;">MONTHLY PASS</span>
+                <div style="text-align:right;">
+                    <div style="font-size:1.1rem; color:#ffd700; text-shadow:0 0 8px rgba(255,215,0,0.4);">$4.99<span style="font-size:0.68rem; color:#5a4a2a;">/mo</span></div>
+                    <div style="font-size:0.6rem; color:#4a3a1a; letter-spacing:0.1em;">CANCEL ANYTIME</div>
+                </div>
+            </div>
+            <div id="passStatusMsg" style="display:none; margin-bottom:10px; font-size:0.82rem; text-align:center;"></div>
+            <button id="passActionBtn" onclick="purchasePass()"
+                    style="width:100%;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.5);color:#ffd700;font-family:'VT323',monospace;font-size:1rem;padding:12px 0;cursor:pointer;letter-spacing:0.16em;transition:all 0.2s;"
+                    onmouseover="this.style.background='rgba(255,215,0,0.16)';"
+                    onmouseout="this.style.background='rgba(255,215,0,0.08)';">
+                ACTIVATE PASS
+            </button>
+            <div style="margin-top:12px; font-size:0.62rem; color:#3a2a1a; letter-spacing:0.1em; text-align:center;">
+                REAL BILLING REQUIRES STRIPE — CURRENTLY SIMULATED
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════ ITEM DETAIL MODAL ══════════════ -->
+<div id="itemDetailModal" class="hidden fixed inset-0 flex items-center justify-center z-50"
+     style="background:rgba(0,0,0,0.94); padding:16px;">
+    <div id="itemDetailBox" class="item-detail-box p-8">
+        <button onclick="closeItemDetail()"
+                style="position:absolute;top:12px;right:16px;background:none;border:none;cursor:pointer;font-size:1.8rem;line-height:1;color:#c026d3;">×</button>
+
+        <!-- Large icon -->
+        <div id="idIcon" class="item-detail-icon-large"></div>
+
+        <!-- Name + rarity row -->
+        <div style="text-align:center; margin-bottom:10px;">
+            <div id="idName" style="font-size:1.6rem; color:#e8e0f8; letter-spacing:0.1em; margin-bottom:4px;"></div>
+            <div style="display:flex; justify-content:center; gap:8px; align-items:center;">
+                <span id="idRarityBadge" style="font-size:0.72rem; letter-spacing:0.14em; padding:2px 10px; border:1px solid transparent;"></span>
+                <span id="idTypeBadge"   style="font-size:0.62rem; letter-spacing:0.12em; padding:2px 8px; border:1px solid transparent;"></span>
+            </div>
+        </div>
+
+        <!-- Flavor line -->
+        <div id="idFlavor" style="text-align:center; font-size:0.82rem; color:#5a4a7a; letter-spacing:0.1em; margin-bottom:16px; font-style:italic;"></div>
+
+        <!-- Stats row -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+            <div id="idCostBlock" style="border:1px solid rgba(192,38,211,0.25); padding:8px 12px; background:rgba(0,0,0,0.3);">
+                <div style="font-size:0.62rem; color:#5a3a6a; letter-spacing:0.14em; margin-bottom:2px;">COST / VALUE</div>
+                <div id="idCost" style="font-size:1.1rem; color:#c026d3;"></div>
+            </div>
+            <div id="idStateBlock" style="border:1px solid rgba(192,38,211,0.25); padding:8px 12px; background:rgba(0,0,0,0.3);">
+                <div style="font-size:0.62rem; color:#5a3a6a; letter-spacing:0.14em; margin-bottom:2px;">STATUS</div>
+                <div id="idState" style="font-size:0.92rem; color:#9a7aaa;"></div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div style="border-left:2px solid rgba(192,38,211,0.4); padding-left:12px; margin-bottom:14px;">
+            <div style="font-size:0.62rem; color:#5a3a6a; letter-spacing:0.14em; margin-bottom:4px;">DESCRIPTION</div>
+            <div id="idDesc" style="font-size:0.9rem; color:#c8c0d8; line-height:1.55;"></div>
+        </div>
+
+        <!-- Ability -->
+        <div id="idAbilityBlock" style="border:1px solid rgba(0,255,65,0.2); padding:10px 12px; background:rgba(0,255,65,0.03); margin-bottom:14px;">
+            <div style="font-size:0.62rem; color:#2a7a2a; letter-spacing:0.14em; margin-bottom:4px;">// ABILITY</div>
+            <div id="idAbility" style="font-size:0.9rem; color:#00cc33; line-height:1.5;"></div>
+        </div>
+
+        <!-- Trade lock -->
+        <div id="idTradeBlock" style="border:1px solid rgba(255,100,100,0.2); padding:8px 12px; background:rgba(0,0,0,0.25); margin-bottom:18px;">
+            <div style="font-size:0.62rem; color:#5a2a2a; letter-spacing:0.14em; margin-bottom:3px;">TRADE STATUS</div>
+            <div id="idTrade" style="font-size:0.82rem; color:#ff7070;"></div>
+        </div>
+
+        <!-- Action button (inventory only) -->
+        <div id="idActionBlock"></div>
+    </div>
+</div>
+
+<!-- ══════════════ CONFETTI CANVAS ══════════════ -->
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;display:none;"></canvas>
+
+<!-- ══════════════ SETTINGS MODAL ══════════════ -->
+<div id="settingsModal" class="hidden fixed inset-0 flex items-center justify-center z-50"
+     style="background:rgba(0,0,0,0.92); padding:16px; font-family:'VT323',monospace;">
+    <div class="tp-modal-box w-full max-w-md p-8" style="max-height:90vh; overflow-y:auto;">
+        <div class="flex justify-between items-center mb-6">
+            <div class="text-xl neon-purple">// ACCOUNT SETTINGS //</div>
+            <button onclick="closeSettingsModal()" style="color:#c026d3; background:none; border:none; cursor:pointer; font-size:1.8rem; line-height:1;">×</button>
+        </div>
+
+        <!-- Profile section -->
+        <div style="font-size:0.62rem; color:#3a2a4a; letter-spacing:0.15em; margin-bottom:10px;">// PROFILE</div>
+        <div class="space-y-4" style="margin-bottom:20px;">
+            <div>
+                <label style="display:block; font-size:0.78rem; color:#c026d3; margin-bottom:5px; letter-spacing:0.12em;">USERNAME</label>
+                <div id="settingsUsername" style="font-size:1.1rem; color:#e0e0e0; border:1px solid rgba(192,38,211,0.2); padding:9px 12px; background:rgba(0,0,0,0.4); letter-spacing:0.08em;"></div>
+            </div>
+            <div>
+                <label style="display:block; font-size:0.78rem; color:#c026d3; margin-bottom:5px; letter-spacing:0.12em;">EMAIL (OPTIONAL)</label>
+                <input id="settingsEmail" type="email"
+                       class="w-full border border-[#c026d3] p-3 text-base"
+                       style="background:#000; font-family:'VT323',monospace; color:#e0e0e0;"
+                       placeholder="your@email.com">
+            </div>
+            <div>
+                <label style="display:block; font-size:0.78rem; color:#c026d3; margin-bottom:5px; letter-spacing:0.12em;">MEMBER SINCE</label>
+                <div id="settingsJoined" style="font-size:0.88rem; color:#7a4a8a; letter-spacing:0.08em;"></div>
+            </div>
+        </div>
+
+        <!-- Signal Vault section -->
+        <div style="font-size:0.62rem; color:#1a3a1a; letter-spacing:0.15em; margin-bottom:10px; border-top:1px solid rgba(0,255,65,0.08); padding-top:16px;">// SIGNAL VAULT</div>
+        <div style="border:1px solid rgba(0,255,65,0.12); padding:14px; background:rgba(0,0,0,0.3); margin-bottom:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div>
+                    <div style="font-size:0.62rem; color:#1a3a1a; letter-spacing:0.12em; margin-bottom:3px;">VAULT STATUS</div>
+                    <div style="font-size:0.9rem; color:#2a4a2a; letter-spacing:0.06em;">⬡ NOT YET GENERATED</div>
+                </div>
+                <span class="vault-coming-soon">COMING SOON</span>
+            </div>
+            <div style="font-size:0.7rem; color:#1a3a1a; letter-spacing:0.05em; line-height:1.7; border-top:1px solid rgba(0,255,65,0.07); padding-top:10px;">
+                <div style="margin-bottom:4px;">A Solana wallet will be <span style="color:#2a5a2a;">automatically generated</span> for your account in a future update.</div>
+                <div style="margin-bottom:4px;">The vault belongs to your site account — no personal wallet connection required.</div>
+                <div style="color:#1a2a1a;">Recovery phrase access will be available in settings after generation.</div>
+            </div>
+        </div>
+        <!-- Future vault management placeholder -->
+        <div style="border:1px solid rgba(0,255,65,0.06); padding:10px 14px; background:rgba(0,0,0,0.15); margin-bottom:20px; opacity:0.5; pointer-events:none;">
+            <div style="font-size:0.58rem; color:#1a3a1a; letter-spacing:0.14em; margin-bottom:6px;">// FUTURE: VAULT MANAGEMENT</div>
+            <div style="font-size:0.68rem; color:#1a2a1a; line-height:1.6; letter-spacing:0.04em;">
+                <div>◻ Vault address — generated automatically</div>
+                <div>◻ Recovery phrase — accessible after identity verification</div>
+                <div>◻ Network: Solana · USDC-ready</div>
+                <div style="margin-top:6px; font-size:0.58rem; color:#111;">⚠ Recovery phrase will only be shown once. Backend implementation required.</div>
+            </div>
+        </div>
+
+        <!-- Points clarity block -->
+        <div style="border:1px solid rgba(192,38,211,0.1); padding:12px; background:rgba(0,0,0,0.2); margin-bottom:20px; font-size:0.72rem; color:#4a3a5a; line-height:1.7; letter-spacing:0.04em;">
+            <div style="font-size:0.62rem; color:#3a2a4a; letter-spacing:0.14em; margin-bottom:6px;">// HOW THIS WORKS</div>
+            <div>⬡ <span style="color:#c026d3;">POINTS</span> — earned in-app. Used for entries, rewards, and unlocks.</div>
+            <div>◈ <span style="color:#ffd700;">SIGNAL VAULT</span> — future site-generated wallet for value storage and redemptions.</div>
+            <div style="margin-top:4px; color:#2a1a3a;">Points are not money. Vault generation is a future backend feature.</div>
+        </div>
+
+        <div id="settingsSaveMsg" style="display:none; font-size:0.82rem; color:#00ff41; letter-spacing:0.1em; text-align:center; margin-bottom:10px;">SETTINGS SAVED ✓</div>
+        <button onclick="saveSettings()"
+                class="w-full py-3 text-base tracking-widest"
+                style="background:#c026d3; color:#000; font-family:'VT323',monospace; border:none; cursor:pointer; transition:background 0.15s;"
+                onmouseover="this.style.background='#fff';" onmouseout="this.style.background='#c026d3';">
+            SAVE SETTINGS
+        </button>
+    </div>
+</div>
+
+<!-- wallet modal stub — personal wallet connect disabled, kept for JS compatibility -->
+<div id="walletModal" class="hidden" aria-hidden="true">
+    <input id="walletAddressInput" type="hidden">
+    <div id="walletConnectMsg"></div>
+</div>
+
+<!-- ══════════════ TODD'S PEOPLE — SIGN IN MODAL ══════════════ -->
+<div id="tpModal" class="hidden fixed inset-0 flex items-center justify-center z-50"
+     style="background:rgba(0,0,0,0.92);">
+    <div class="tp-modal-box w-full max-w-md p-8">
+
+        <div class="flex justify-between items-center mb-6">
+            <div class="text-xl neon-purple">// JOIN TODD'S PEOPLE //</div>
+            <button onclick="closeTPModal()"
+                    style="color:#c026d3; background:none; border:none; cursor:pointer; font-size:1.8rem; line-height:1;">×</button>
+        </div>
+
+        <div id="tpModalError" style="display:none; color:#ff4444; font-size:0.88rem; margin-bottom:12px; letter-spacing:0.08em;"></div>
+
+        <div class="space-y-5">
+            <div>
+                <label style="display:block; font-size:0.85rem; color:#c026d3; margin-bottom:6px; letter-spacing:0.12em;">USERNAME *</label>
+                <input id="tpInputUser" type="text"
+                       class="w-full border border-[#c026d3] p-3 text-base"
+                       style="background:#000; font-family:'VT323',monospace; color:#e0e0e0;"
+                       placeholder="yourname"
+                       onkeydown="if(event.key==='Enter')tpSubmit()">
+            </div>
+            <div>
+                <label style="display:block; font-size:0.85rem; color:#c026d3; margin-bottom:6px; letter-spacing:0.12em;">EMAIL (OPTIONAL)</label>
+                <input id="tpInputEmail" type="email"
+                       class="w-full border border-[#c026d3] p-3 text-base"
+                       style="background:#000; font-family:'VT323',monospace; color:#e0e0e0;"
+                       placeholder="you@somewhere.com"
+                       onkeydown="if(event.key==='Enter')tpSubmit()">
+            </div>
+            <button onclick="tpSubmit()"
+                    class="w-full py-4 text-lg tracking-widest"
+                    style="background:#c026d3; color:#000; font-family:'VT323',monospace; border:none; cursor:pointer; transition:background 0.15s;"
+                    onmouseover="this.style.background='#fff';"
+                    onmouseout="this.style.background='#c026d3';">
+                ENTER THE CIRCLE
+            </button>
+            <div style="font-size:0.75rem; color:#3a1a4a; text-align:center; letter-spacing:0.08em;">
+                Already a member? Enter your username to sign back in.
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ══════════════ CONTACT MODAL ══════════════ -->
+<div id="contactModal" class="hidden fixed inset-0 flex items-center justify-center z-50"
+     style="background:rgba(0,0,0,0.92);">
+    <div id="modalInner" class="modal-box bg-black w-full max-w-lg p-8">
+
+        <div class="flex justify-between items-center mb-6">
+            <div class="text-xl neon-purple">INITIATE TRANSMISSION // CONTACT TODD</div>
+            <button onclick="closeContactModal()"
+                    class="text-3xl transition hover:text-white"
+                    style="color:#c026d3; background:none; border:none; cursor:pointer;">×</button>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm mb-1" style="color:#c026d3;">YOUR X USERNAME @</label>
+                <input id="xUsername" type="text"
+                       class="w-full border border-[#c026d3] p-3 text-base"
+                       style="background:#000;"
+                       placeholder="yourhandle">
+            </div>
+
+            <div>
+                <label class="block text-sm mb-2" style="color:#c026d3;">WHAT ARE YOU REACHING OUT FOR?</label>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <button onclick="selectReason(this)" class="reason-btn border border-[#c026d3] p-3 transition"
+                            style="color:#c026d3; font-family:'VT323',monospace; font-size:1rem;">
+                        Content Collaboration
+                    </button>
+                    <button onclick="selectReason(this)" class="reason-btn border border-[#c026d3] p-3 transition"
+                            style="color:#c026d3; font-family:'VT323',monospace; font-size:1rem;">
+                        Creative Direction
+                    </button>
+                    <button onclick="selectReason(this)" class="reason-btn border border-[#c026d3] p-3 transition"
+                            style="color:#c026d3; font-family:'VT323',monospace; font-size:1rem;">
+                        Content / Media Management
+                    </button>
+                    <button onclick="selectReason(this)" class="reason-btn border border-[#c026d3] p-3 transition"
+                            style="color:#c026d3; font-family:'VT323',monospace; font-size:1rem;">
+                        Brand Strategy &amp; Growth
+                    </button>
+                    <div class="col-span-2">
+                        <button onclick="selectReason(this)" class="reason-btn border border-[#c026d3] p-3 transition w-full"
+                                style="color:#c026d3; font-family:'VT323',monospace; font-size:1rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                            Mental Health Vent
+                            <span class="tooltip-wrap" onclick="event.stopPropagation();">
+                                <span class="tooltip-icon" onclick="this.classList.toggle('active')">?</span>
+                                <span class="tooltip-bubble">Got something on your mind? I'll listen and offer support or advice.</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm mb-1" style="color:#c026d3;">MESSAGE / PITCH</label>
+                <textarea id="message" rows="4"
+                          class="w-full border border-[#c026d3] p-3 text-base resize-none"
+                          style="background:#000;"
+                          placeholder="What's the mission?"></textarea>
+            </div>
+
+            <button onclick="submitContact()"
+                    class="w-full py-4 text-lg tracking-widest transition"
+                    style="background:#c026d3; color:#000; font-family:'VT323',monospace; border:none; cursor:pointer;"
+                    onmouseover="this.style.background='#fff';"
+                    onmouseout="this.style.background='#c026d3';">
+                SEND TRANSMISSION
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Twitter widget (async, non-blocking) -->
+<script async src="https://platform.twitter.com/widgets.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════
+   INTRO OVERLAY — VIDEO BOOT SEQUENCE
+   ═══════════════════════════════════════════ */
+(function () {
+    var overlay = document.getElementById('introOverlay');
+    if (!overlay || overlay.style.display === 'none') return;
+
+    var skipBtn = document.getElementById('introSkip');
+    var timers  = [];
+
+    function t(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+    function done() {
+        sessionStorage.setItem('intro_seen', '1');
+        overlay.style.display = 'none';
+    }
+
+    function skipIntro() {
+        timers.forEach(clearTimeout);
+        timers = [];
+        overlay.classList.remove('fade-out');
+        done();
+    }
+
+    skipBtn.addEventListener('click', skipIntro);
+
+    // Auto-fade at 4 seconds
+    t(4000, function () {
+        overlay.classList.add('fade-out');
+    });
+
+    // Remove after fade completes
+    t(4650, done);
+})();
+
+/* ═══════════════════════════════════════════
+   GALAXY — FLOATING PARTICLES
+   ═══════════════════════════════════════════ */
+(function () {
+    var bg     = document.getElementById('galaxy-bg');
+    var colors = [
+        'rgba(192,38,211,0.45)',
+        'rgba(0,255,65,0.32)',
+        'rgba(255,255,255,0.28)'
+    ];
+    for (var i = 0; i < 20; i++) {
+        var p    = document.createElement('div');
+        p.className = 'particle';
+        var sz   = (Math.random() * 2 + 1).toFixed(1);
+        var dur  = (Math.random() * 22 + 14).toFixed(1);
+        var del  = (Math.random() * 12).toFixed(1);
+        var col  = colors[Math.floor(Math.random() * colors.length)];
+        p.style.cssText = [
+            'width:'  + sz  + 'px',
+            'height:' + sz  + 'px',
+            'left:'   + (Math.random() * 100).toFixed(1) + '%',
+            'bottom:' + (Math.random() * 35).toFixed(1)  + '%',
+            'background:' + col,
+            'animation-duration:' + dur + 's',
+            'animation-delay:-'   + del + 's'
+        ].join(';');
+        bg.appendChild(p);
+    }
+})();
+
+/* ═══════════════════════════════════════════
+   PHONE CTA — SECTION-BASED VISIBILITY
+   Visible only while LIVE FEED is in view
+   ═══════════════════════════════════════════ */
+(function () {
+    var cta      = document.getElementById('phoneCTA');
+    var feedEl   = document.getElementById('feedContainer');
+    var active   = false;
+
+    function getSectionBounds() {
+        /* walk up from feedContainer to its glass-panel wrapper */
+        var el = feedEl;
+        while (el && !el.classList.contains('glass-panel')) el = el.parentElement;
+        return el ? el.getBoundingClientRect() : null;
+    }
+
+    function checkSection() {
+        var rect = getSectionBounds();
+        if (!rect) return;
+        /* "in view" = any part of the LIVE FEED panel is between top and bottom of viewport */
+        var inView = rect.top < window.innerHeight && rect.bottom > 0;
+
+        if (inView && !active) {
+            active = true;
+            cta.classList.remove('raised');
+            cta.classList.add('tucked');
+        } else if (!inView && active) {
+            active = false;
+            cta.classList.remove('tucked', 'raised');
+        }
+    }
+
+    window.addEventListener('scroll', checkSection, { passive: true });
+    checkSection();
+
+    /* hover: raise for interaction */
+    cta.addEventListener('mouseenter', function () {
+        if (!active) return;
+        cta.classList.remove('tucked');
+        cta.classList.add('raised');
+    });
+
+    /* leave: tuck back, always */
+    cta.addEventListener('mouseleave', function () {
+        if (!active) return;
+        cta.classList.remove('raised');
+        cta.classList.add('tucked');
+    });
+})();
+
+/* ═══════════════════════════════════════════
+   LIVE FEED DATA
+   ═══════════════════════════════════════════ */
+const FEED = [
+    { text: "The dealer",             timestamp: "1h ago",    media: true,  link: "https://x.com/ajordanweb3", featured: true  },
+    { text: "Enjoy your weekend Poe", timestamp: "3h ago",    media: false, link: "https://x.com/ajordanweb3", featured: false },
+    { text: "Keep thinking pal",      timestamp: "5h ago",    media: true,  link: "https://x.com/ajordanweb3", featured: false },
+    { text: "Yoo Annie",              timestamp: "Yesterday", media: false, link: "https://x.com/ajordanweb3", featured: false },
+    { text: "Hi Hash",                timestamp: "Yesterday", media: false, link: "https://x.com/ajordanweb3", featured: false },
+    { text: "They forgot one 🤫",     timestamp: "2d ago",    media: true,  link: "https://x.com/ajordanweb3", featured: false }
+];
+
+function renderFeed(items) {
+    const container = document.getElementById('feedContainer');
+    container.innerHTML = items.map(item => `
+        <a href="${item.link}" target="_blank" rel="noopener noreferrer"
+           class="feed-item ${item.featured ? 'featured' : ''}"
+           style="display:block; text-decoration:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="color:#7a3a8a; font-size:0.78rem; letter-spacing:0.08em;">${item.timestamp}</span>
+                <span style="display:flex; gap:5px; align-items:center;">
+                    ${item.featured ? '<span style="font-size:0.6rem;background:#c026d3;color:#000;padding:1px 5px;letter-spacing:1px;">★ HOT</span>' : ''}
+                    ${item.media    ? '<span style="font-size:0.6rem;border:1px solid #c026d3;color:#c026d3;padding:1px 5px;letter-spacing:1px;">[MEDIA]</span>' : ''}
+                </span>
+            </div>
+            <div style="color:#d0d0d0; font-size:0.95rem; line-height:1.4;">${item.text}</div>
+        </a>
+    `).join('');
+}
+
+/* ════════ MODAL ════════ */
+function openContactModal() {
+    document.getElementById('contactModal').classList.remove('hidden');
+    const inner = document.getElementById('modalInner');
+    inner.classList.remove('modal-glitch');
+    void inner.offsetWidth;
+    inner.classList.add('modal-glitch');
+}
+function closeContactModal() {
+    document.getElementById('contactModal').classList.add('hidden');
+}
+
+let selectedReason = '';
+function selectReason(btn) {
+    document.querySelectorAll('.reason-btn').forEach(b => {
+        b.style.background = 'transparent';
+        b.style.color = '#c026d3';
+        b.classList.remove('selected');
+    });
+    btn.style.background = '#c026d3';
+    btn.style.color = '#000';
+    btn.classList.add('selected');
+    selectedReason = btn.textContent.trim();
+}
+
+function submitContact() {
+    const username = document.getElementById('xUsername').value.trim();
+    const message  = document.getElementById('message').value.trim();
+    if (!username || !selectedReason || !message) {
+        alert('TRANSMISSION INCOMPLETE — FILL ALL FIELDS');
+        return;
+    }
+    alert(`TRANSMISSION SENT — TODD WILL RESPOND IN THE TRENCHES\n\nFrom: @${username}\nReason: ${selectedReason}`);
+    closeContactModal();
+}
+
+/* ════════ REVIEWS ════════ */
+function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+const PRESET_REVIEWS = [
+    { text: "Todd is outstanding — upfront, genuine, and real. I'd recommend working with him or even just having him in your corner.", time: "// VERIFIED" },
+    { text: "Very caring and actually listens. Couldn't ask for a better internet friend — always there when I need to talk.", time: "// VERIFIED" }
+];
+
+function renderReviews() {
+    const reviews   = JSON.parse(localStorage.getItem('ajordan_reviews') || '[]');
+    const container = document.getElementById('reviewsList');
+    const allReviews = [...reviews, ...PRESET_REVIEWS];
+    container.innerHTML = allReviews.map(r => `
+        <div style="border-bottom:1px solid rgba(60,10,80,0.6); padding-bottom:12px; margin-bottom:12px;">
+            <div style="font-size:0.72rem; color:#4a2a5a; margin-bottom:5px; letter-spacing:0.1em;">${escapeHtml(r.time)}</div>
+            <div style="color:#ddc8ee; font-size:0.95rem; line-height:1.5;">${escapeHtml(r.text)}</div>
+        </div>
+    `).join('');
+}
+
+function submitReview() {
+    const input  = document.getElementById('reviewInput');
+    const review = input.value.trim();
+    if (!review) return;
+    const reviews = JSON.parse(localStorage.getItem('ajordan_reviews') || '[]');
+    reviews.unshift({ text: review, time: new Date().toLocaleString() });
+    localStorage.setItem('ajordan_reviews', JSON.stringify(reviews));
+    input.value = '';
+    renderReviews();
+}
+
+/* ════════ INIT ════════ */
+renderFeed(FEED);
+renderReviews();
+
+setTimeout(() => {
+    const loaded = document.querySelector('#tweet-container iframe');
+    if (!loaded) {
+        document.getElementById('post-card-fallback').classList.remove('hidden');
+    }
+}, 4000);
+
+document.getElementById('contactModal').addEventListener('click', function(e) {
+    if (e.target === this) closeContactModal();
+});
+
+console.log('%c★ AJORDAN — CREATIVE DIRECTOR // UNIT ACTIVE', 'color:#c026d3; font-family:monospace; font-size:13px;');
+
+/* ═══════════════════════════════════════════════════════
+   TODD'S PEOPLE SYSTEM
+   ═══════════════════════════════════════════════════════ */
+const TP_KEY      = 'tp_users';
+const TP_SESS_KEY = 'tp_session';
+
+/*
+ * type: 'item'   — digital collectible
+ * type: 'cash'   — simulated payout value (cashValue cents)
+ * type: 'boost'  — active ability: free entries / point boost
+ * type: 'access' — unlocks future content / better drops
+ *
+ * holdMs: trade-lock period in milliseconds after acquisition
+ * ability: what the item actively does for the owner
+ * flavor: short premium flavor line for high-tier items
+ * icon: emoji glyph used as the item's visual emblem
+ * benefit: one-line "why this matters" for the detail view
+ */
+const REWARDS_CATALOG = [
+    /* ── COMMON ── */
+    {
+        id: 'static_badge', name: 'Static Badge', rarity: 'common', type: 'item', cost: 15,
+        icon: '◈',
+        desc: 'Proof you showed up. Every collector starts here.',
+        ability: 'Signals membership. Future account perks attach to badge holders.',
+        benefit: 'Marks your account as an active member of Todd\'s People.',
+        holdMs: 2 * 60 * 60 * 1000,    /* 2h */
+    },
+    {
+        id: 'signal_chip', name: 'Signal Chip', rarity: 'common', type: 'item', cost: 20,
+        icon: '⬡',
+        desc: 'Entry-level access token. The signal starts here.',
+        ability: '+2 bonus points on every daily claim while owned.',
+        benefit: 'Passively boosts your daily earnings. Stack with streaks.',
+        holdMs: 2 * 60 * 60 * 1000,
+    },
+    {
+        id: 'entry_boost', name: 'Entry Boost x1', rarity: 'common', type: 'boost', cost: 25,
+        icon: '▲',
+        desc: 'One free drop entry. Use it when the drop is right.',
+        ability: 'Grants one free entry into any live drop when redeemed.',
+        benefit: 'Skip the point cost on one drop. Timing is everything.',
+        holdMs: 1 * 60 * 60 * 1000,
+    },
+    /* ── RARE ── */
+    {
+        id: 'ghost_key', name: 'Ghost Key', rarity: 'rare', type: 'access', cost: 60,
+        icon: '⌘',
+        flavor: 'Opens doors others can\'t see.',
+        desc: 'Access artifact — unlocks exclusive drops and future content.',
+        ability: 'Priority access to exclusive drops. Holders get first entry window.',
+        benefit: 'Gets you into content and drops before the general pool opens.',
+        holdMs: 12 * 60 * 60 * 1000,   /* 12h */
+    },
+    {
+        id: 'neon_blade', name: 'Neon Blade', rarity: 'rare', type: 'item', cost: 75,
+        icon: '⚔',
+        flavor: 'Signal forged into form.',
+        desc: 'A rare status item. Sharp, distinct, and hard to hold.',
+        ability: 'Slightly increases your drop win probability while in inventory.',
+        benefit: 'Improves your odds in every drop you enter. Subtle but real.',
+        holdMs: 12 * 60 * 60 * 1000,
+    },
+    {
+        id: 'cash_25', name: '$0.25 Reward', rarity: 'rare', type: 'cash', cost: 80,
+        icon: '◎',
+        flavor: 'Value stored in motion.',
+        desc: 'Redeemable once live payouts launch.',
+        ability: 'Real value ($0.25). Mark for redemption when payouts go live.',
+        benefit: 'Converts to actual money when the payout system activates.',
+        holdMs: 24 * 60 * 60 * 1000,   /* 24h */
+        cashValue: 25,
+    },
+    {
+        id: 'cash_50', name: '$0.50 Reward', rarity: 'rare', type: 'cash', cost: 120,
+        icon: '◎',
+        flavor: 'Built for those who stay.',
+        desc: 'Half a dollar. Earned through the system.',
+        ability: 'Real value ($0.50). Mark for redemption when payouts go live.',
+        benefit: 'Converts to real payout. Patient holders earn more over time.',
+        holdMs: 24 * 60 * 60 * 1000,
+        cashValue: 50,
+    },
+    /* ── LEGENDARY ── */
+    {
+        id: 'void_crystal', name: 'Void Crystal', rarity: 'legendary', type: 'item', cost: 200,
+        icon: '✦',
+        flavor: 'Crystallized from pure signal.',
+        desc: 'A legendary artifact. Few will ever hold one.',
+        ability: 'Boosts all point earnings by 10% while owned. Compounds with streaks.',
+        benefit: 'A permanent 10% multiplier on every point you earn. Elite tier.',
+        holdMs: 48 * 60 * 60 * 1000,   /* 48h */
+    },
+    {
+        id: 'cash_100', name: '$1.00 Reward', rarity: 'legendary', type: 'cash', cost: 250,
+        icon: '◈',
+        flavor: 'Rare. Held by few.',
+        desc: 'One dollar. Real value. Earned through the ecosystem.',
+        ability: 'Real value ($1.00). Queued for payout when system activates.',
+        benefit: 'Highest-tier redeemable value at this level. Mark and hold.',
+        holdMs: 48 * 60 * 60 * 1000,
+        cashValue: 100,
+    },
+    {
+        id: 'phantom_edge', name: 'Phantom Edge', rarity: 'legendary', type: 'item', cost: 350,
+        icon: '◆',
+        flavor: 'High-tier access artifact. Held by the few.',
+        desc: 'Legendary. The sharpest edge in the system.',
+        ability: 'Unlocks the Phantom tier — highest drop priority and exclusive future events.',
+        benefit: 'You become eligible for Phantom-tier drops with the best rewards.',
+        holdMs: 72 * 60 * 60 * 1000,   /* 72h */
+    },
+    {
+        id: 'cash_300', name: '$3.00 Reward', rarity: 'legendary', type: 'cash', cost: 750,
+        icon: '◈',
+        flavor: 'Three dollars. Signal made real.',
+        desc: 'The rarest cash reward. Patience required.',
+        ability: 'Real value ($3.00). Highest cash item in the system.',
+        benefit: 'Top-tier cash reward. Redeem or hold — scarcity makes it worth more.',
+        holdMs: 72 * 60 * 60 * 1000,
+        cashValue: 300,
+    },
+];
+
+const RARITY_LABEL = { common: 'COMMON', rare: 'RARE', legendary: 'LEGENDARY' };
+const TYPE_LABEL   = { item: 'ITEM', cash: 'CASH VALUE', boost: 'BOOST', access: 'ACCESS' };
+const TYPE_COLOR   = { item: '#9a7aaa', cash: '#ffd700', boost: '#00ff41', access: '#7b8ff5' };
+
+/* ── trade lock helpers ── */
+function getHoldPeriodMs(rarity, type) {
+    if (type === 'cash') return rarity === 'legendary' ? 72 * 3600000 : 24 * 3600000;
+    if (rarity === 'legendary') return 48 * 3600000;
+    if (rarity === 'rare')      return 12 * 3600000;
+    return 2 * 3600000;
+}
+function isTradeUnlocked(invItem) {
+    if (!invItem.unlockedAt) return true;
+    const holdMs = invItem.holdMs || getHoldPeriodMs(invItem.rarity, invItem.type);
+    return Date.now() >= new Date(invItem.unlockedAt).getTime() + holdMs;
+}
+function tradeLockLabel(invItem) {
+    if (isTradeUnlocked(invItem)) return { text: 'TRADABLE', unlocked: true };
+    const holdMs   = invItem.holdMs || getHoldPeriodMs(invItem.rarity, invItem.type);
+    const msLeft   = (new Date(invItem.unlockedAt).getTime() + holdMs) - Date.now();
+    const h = Math.floor(msLeft / 3600000);
+    const m = Math.floor((msLeft % 3600000) / 60000);
+    return { text: 'TRADABLE IN ' + h + 'h ' + m + 'm', unlocked: false };
+}
+
+/* ── icon class helper ── */
+function itemIconClass(rarity, type) {
+    if (type === 'cash') return 'item-icon item-icon-cash';
+    if (rarity === 'legendary') return 'item-icon item-icon-legendary';
+    if (rarity === 'rare')      return 'item-icon item-icon-rare';
+    return 'item-icon item-icon-common';
+}
+
+/* ── catalog lookup by id or name ── */
+function catalogLookup(idOrName) {
+    return REWARDS_CATALOG.find(r => r.id === idOrName || r.name === idOrName) || null;
+}
+
+/* ── helpers ── */
+function tpGetUsers() {
+    return JSON.parse(localStorage.getItem(TP_KEY) || '{}');
+}
+function tpSaveUsers(users) {
+    localStorage.setItem(TP_KEY, JSON.stringify(users));
+}
+function tpGetSession() {
+    return localStorage.getItem(TP_SESS_KEY) || null;
+}
+function tpSetSession(username) {
+    localStorage.setItem(TP_SESS_KEY, username);
+}
+function tpClearSession() {
+    localStorage.removeItem(TP_SESS_KEY);
+}
+function tpGetUser(username) {
+    return tpGetUsers()[username] || null;
+}
+function tpSaveUser(username, data) {
+    const users = tpGetUsers();
+    users[username] = data;
+    tpSaveUsers(users);
+}
+function todayStr() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+/* ── points helper — logs every change, applies item abilities ── */
+function tpAddPoints(username, amount, reason) {
+    const user = tpGetUser(username);
+    if (!user) return;
+
+    let finalAmount = amount;
+
+    /* apply passive abilities only for positive point gains */
+    if (amount > 0 && user.inventory && user.inventory.length) {
+        const inv = user.inventory;
+        /* Void Crystal: +10% to all earnings */
+        if (inv.find(i => i.id === 'void_crystal')) {
+            finalAmount = Math.round(amount * 1.10);
+        }
+        /* Signal Chip: +2 bonus on daily claim specifically */
+        if (reason && reason.toLowerCase().includes('daily') && inv.find(i => i.id === 'signal_chip')) {
+            finalAmount += 2;
+        }
+    }
+
+    user.points = (user.points || 0) + finalAmount;
+    if (!user.pointsHistory) user.pointsHistory = [];
+    const logReason = finalAmount !== amount ? reason + ' (×ability)' : reason;
+    user.pointsHistory.unshift({ amount: finalAmount, reason: logReason, date: new Date().toISOString() });
+    /* keep last 20 events */
+    if (user.pointsHistory.length > 20) user.pointsHistory.length = 20;
+    tpSaveUser(username, user);
+    tpRefreshPoints(user.points);
+    return user;
+}
+
+/* ── streak helper ── */
+function tpUpdateStreak(user) {
+    const today     = todayStr();
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (user.lastDailyReward === yesterday) {
+        user.streak = (user.streak || 1) + 1;
+    } else if (user.lastDailyReward !== today) {
+        user.streak = 1;
+    }
+    return user;
+}
+
+/* ── streak bonus thresholds ── */
+function tpStreakBonus(streak) {
+    if (streak >= 30) return 5;
+    if (streak >= 7)  return 3;
+    if (streak >= 3)  return 1;
+    return 0;
+}
+
+/* ── modal open/close ── */
+function openTPModal() {
+    document.getElementById('tpModal').classList.remove('hidden');
+    document.getElementById('tpModalError').style.display = 'none';
+    document.getElementById('tpInputUser').focus();
+}
+function closeTPModal() {
+    document.getElementById('tpModal').classList.add('hidden');
+}
+
+/* ── register / login ── */
+function tpSubmit() {
+    const rawUser = document.getElementById('tpInputUser').value.trim();
+    const email   = document.getElementById('tpInputEmail').value.trim();
+    const errEl   = document.getElementById('tpModalError');
+
+    if (!rawUser) {
+        errEl.textContent = 'USERNAME REQUIRED';
+        errEl.style.display = 'block';
+        return;
+    }
+    const username = rawUser.toUpperCase().replace(/[^A-Z0-9_\-]/g, '');
+    if (!username) {
+        errEl.textContent = 'USERNAME CONTAINS INVALID CHARACTERS';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    const users = tpGetUsers();
+    if (!users[username]) {
+        // New user — register
+        users[username] = {
+            username,
+            email,
+            points: 0,
+            inventory: [],
+            joinDate: new Date().toISOString(),
+            lastDailyReward: null,
+            streak: 0,
+            pointsHistory: [],
+            purchases: [],
+            sponsorInteractions: [],
+            premiumPass: [],
+            redemptionRequests: [],
+            freeEntries: 0,
+        };
+        tpSaveUsers(users);
+        tpAddPoints(username, 10, 'Welcome bonus');
+        launchConfetti();
+    }
+
+    tpSetSession(username);
+    closeTPModal();
+    tpInitUI();
+}
+
+/* ── logout ── */
+function tpLogout() {
+    tpClearSession();
+    tpInitUI();
+}
+
+/* ── daily reward ── */
+function claimDaily() {
+    const username = tpGetSession();
+    if (!username) return;
+    let user = tpGetUser(username);
+    if (!user) return;
+    if (user.lastDailyReward === todayStr()) return;
+
+    /* update streak before recording today's claim */
+    user = tpUpdateStreak(user);
+    user.lastDailyReward = todayStr();
+    tpSaveUser(username, user);
+
+    const base        = 5;
+    const streakBonus = tpStreakBonus(user.streak);
+    const passBonus   = isPassActive() ? PASS_DAILY_BONUS : 0;
+    const collBonus   = getCollectorDailyBonus(getCollectorLevel(user.inventory).level);
+    const total       = base + streakBonus + passBonus + collBonus;
+
+    let reasonParts = ['Daily reward'];
+    if (streakBonus) reasonParts.push('streak day ' + user.streak);
+    if (passBonus)   reasonParts.push('Pass bonus');
+    if (collBonus)   reasonParts.push('Collector LVL bonus');
+    tpAddPoints(username, total, reasonParts.join(' + '));
+
+    /* pass: grant free daily drop entry */
+    passFreeDailyEntry(username);
+
+    /* refresh the final saved state */
+    user = tpGetUser(username);
+
+    document.getElementById('tpDailyBtn').style.display  = 'none';
+    document.getElementById('tpDailyDone').style.display = 'block';
+    startDailyCooldown(user.lastDailyReward);
+    renderTPPointsHistory(user);
+    renderStreakBadge(user);
+    completeDailyObj('claim_daily');
+    /* luck roll after daily claim */
+    rollLuck(username);
+}
+
+/* ── unlock reward ── */
+function unlockReward(rewardId) {
+    const username = tpGetSession();
+    if (!username) return;
+    let user = tpGetUser(username);
+    if (!user) return;
+
+    const reward = REWARDS_CATALOG.find(r => r.id === rewardId);
+    if (!reward) return;
+    if (user.inventory.find(i => i.id === rewardId)) return; // already owned
+
+    if (user.points < reward.cost) {
+        /* inline error — no alert */
+        tpShowShopMsg('NOT ENOUGH POINTS — NEED ' + (reward.cost - user.points) + ' MORE', '#ff4444');
+        return;
+    }
+
+    user.inventory.push({
+        id:          reward.id,
+        name:        reward.name,
+        rarity:      reward.rarity,
+        type:        reward.type  || 'item',
+        cashValue:   reward.cashValue || null,
+        icon:        reward.icon  || '◈',
+        holdMs:      reward.holdMs || getHoldPeriodMs(reward.rarity, reward.type || 'item'),
+        redeemState: 'pending',
+        unlockedAt:  new Date().toISOString(),
+        ownerId:     username,
+        tradable:    false,   /* will become true after holdMs */
+    });
+    tpSaveUser(username, user);
+
+    tpAddPoints(username, -reward.cost, 'Unlocked: ' + reward.name);
+    user = tpGetUser(username);
+
+    tpShowShopMsg('✓ ' + reward.name + ' UNLOCKED', '#00ff41');
+    renderTPShop(user);
+    renderTPInventory(user);
+    renderTPPointsHistory(user);
+    rollLuck(username, 0.14);
+}
+
+/* ── inline shop message ── */
+function tpShowShopMsg(text, color) {
+    let el = document.getElementById('tpShopMsg');
+    if (!el) return;
+    el.textContent = text;
+    el.style.color = color;
+    el.style.display = 'block';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+/* ── render points with flash ── */
+function tpRefreshPoints(pts) {
+    const el = document.getElementById('tpPoints');
+    el.textContent = pts;
+    el.classList.remove('pt-flash');
+    void el.offsetWidth;
+    el.classList.add('pt-flash');
+}
+
+/* ── render reward shop ── */
+function renderTPShop(user) {
+    const container = document.getElementById('tpShop');
+    if (!container) return;
+    container.innerHTML = REWARDS_CATALOG.map(r => {
+        const owned      = !!(user && user.inventory.find(i => i.id === r.id));
+        const canAfford  = !!(user && user.points >= r.cost);
+        const isCash     = r.type === 'cash';
+        const typeColor  = TYPE_COLOR[r.type] || '#9a7aaa';
+        const iconClass  = itemIconClass(r.rarity, r.type);
+        const cashBadge  = isCash && r.cashValue ? ` <span style="color:#ffd700;font-size:0.62rem;">$${(r.cashValue/100).toFixed(2)}</span>` : '';
+
+        let statusLabel, statusColor;
+        if (owned)          { statusLabel = '✓ OWNED';                          statusColor = '#3a3a3a'; }
+        else if (canAfford) { statusLabel = r.cost + ' PTS';                     statusColor = '#c026d3'; }
+        else                { statusLabel = 'NEED ' + (r.cost - (user ? user.points : r.cost)) + ' MORE'; statusColor = '#4a2a4a'; }
+
+        return `
+        <div class="reward-item rarity-${r.rarity} ${owned ? 'owned' : canAfford ? 'can-afford' : ''}"
+             onclick="openItemDetail('${r.id}', 'shop')">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="${iconClass}">${r.icon || '◈'}</div>
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                        <span style="font-size:1rem; color:#e0e0e0; letter-spacing:0.06em;">${r.name}${cashBadge}</span>
+                        <div style="display:flex;gap:4px;align-items:center;flex-shrink:0;margin-left:6px;">
+                            <span style="font-size:0.58rem;color:${typeColor};border:1px solid ${typeColor}44;padding:1px 4px;letter-spacing:0.08em;">${TYPE_LABEL[r.type]||'ITEM'}</span>
+                            <span class="rarity-label-${r.rarity}" style="font-size:0.65rem; letter-spacing:0.1em;">${RARITY_LABEL[r.rarity]}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.76rem; color:#6a4a7a; letter-spacing:0.02em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px;">${r.ability || r.desc}</span>
+                        <span style="font-size:0.76rem; color:${statusColor}; letter-spacing:0.06em; white-space:nowrap; margin-left:6px;">${statusLabel}</span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+/* ── redeem an inventory item ── */
+function redeemItem(itemId) {
+    const username = tpGetSession();
+    if (!username) return;
+    const user = tpGetUser(username);
+    if (!user) return;
+    const item = user.inventory.find(i => i.id === itemId);
+    if (!item || item.redeemState === 'redeemed') return;
+    item.redeemState = 'redeemed';
+    item.redeemedAt  = new Date().toISOString();
+    tpSaveUser(username, user);
+    renderTPInventory(user);
+    closeItemDetail();
+}
+
+/* ── collector level calculation ── */
+function getCollectorLevel(inventory) {
+    const counts  = { common: 0, rare: 0, legendary: 0 };
+    inventory.forEach(i => { if (counts[i.rarity] !== undefined) counts[i.rarity]++; });
+    const score   = counts.common + counts.rare * 3 + counts.legendary * 8;
+    const levels  = [
+        { min: 0,  label: 'NEWCOMER',      color: '#4a3a5a' },
+        { min: 1,  label: 'SIGNAL HOLDER', color: '#00ff41' },
+        { min: 5,  label: 'COLLECTOR',     color: '#7b8ff5' },
+        { min: 12, label: 'RARE HUNTER',   color: '#c026d3' },
+        { min: 24, label: 'SIGNAL ELITE',  color: '#ffd700' },
+        { min: 40, label: 'PHANTOM TIER',  color: '#ff8844' },
+    ];
+    let lvl = 0, next = levels[1] || levels[0];
+    for (let i = levels.length - 1; i >= 0; i--) {
+        if (score >= levels[i].min) { lvl = i; next = levels[i + 1] || null; break; }
+    }
+    const pct = next ? Math.min(100, Math.round(((score - levels[lvl].min) / (next.min - levels[lvl].min)) * 100)) : 100;
+    return { level: lvl, label: levels[lvl].label, color: levels[lvl].color, score, pct, counts };
+}
+
+/* ── render inventory ── */
+function renderTPInventory(user) {
+    const list      = document.getElementById('tpInventoryList');
+    const empty     = document.getElementById('tpInvEmpty');
+    const countEl   = document.getElementById('tpInvCount');
+    document.querySelectorAll('.tp-inv-user').forEach(el => el.textContent = user.username);
+
+    const total = user.inventory.length;
+    if (countEl) countEl.textContent = total + ' ITEM' + (total !== 1 ? 'S' : '');
+
+    /* collector level */
+    const coll = getCollectorLevel(user.inventory);
+    const lvlEl = document.getElementById('collectorLevelLabel');
+    const barEl = document.getElementById('collectorBarFill');
+    const brkEl = document.getElementById('collectorBreakdown');
+    if (lvlEl) { lvlEl.textContent = 'LVL ' + coll.level + ' — ' + coll.label; lvlEl.style.color = coll.color; }
+    if (barEl) { barEl.style.width = coll.pct + '%'; barEl.style.boxShadow = '0 0 6px ' + coll.color + '88'; }
+    if (brkEl) brkEl.innerHTML =
+        `<span style="color:#3a5a3a;">${coll.counts.common} COMMON</span>` +
+        `<span style="color:#3a3a7a;">${coll.counts.rare} RARE</span>` +
+        `<span style="color:#6a5a1a;">${coll.counts.legendary} LEGENDARY</span>`;
+    renderCollectorBenefits(user);
+
+    if (!total) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+    empty.style.display = 'none';
+
+    list.innerHTML = user.inventory.map(item => {
+        const typeColor  = TYPE_COLOR[item.type] || '#9a7aaa';
+        const isCash     = item.type === 'cash';
+        const redeemed   = item.redeemState === 'redeemed';
+        const lockInfo   = tradeLockLabel(item);
+        const iconClass  = itemIconClass(item.rarity, item.type);
+        const catItem    = catalogLookup(item.id.replace(/^drop_win_/, '').replace(/^luck_boost_\d+/, 'entry_boost'));
+        const icon       = item.icon || catItem?.icon || '◈';
+        const cashBadge  = isCash && item.cashValue
+            ? `<span style="color:#ffd700;font-size:0.68rem;margin-left:6px;">$${(item.cashValue/100).toFixed(2)}</span>`
+            : '';
+        const rs         = getRedemptionState(item);
+        const stateColor = rs.color;
+        const stateText  = (rs.state !== 'requestable') ? rs.label : '';
+
+        return `
+        <div class="inv-item rarity-${item.rarity}" style="margin-bottom:8px;"
+             onclick="openItemDetail('${item.id}', 'inventory')">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="${iconClass}">${icon}</div>
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                        <span style="font-size:1.02rem; color:#e8e0f0; letter-spacing:0.06em;">${escapeHtml(item.name)}${cashBadge}</span>
+                        <div style="display:flex;gap:4px;align-items:center;flex-shrink:0;margin-left:4px;">
+                            <span class="${lockInfo.unlocked ? 'trade-lock-badge unlocked' : 'trade-lock-badge'}">${lockInfo.unlocked ? '🔓' : '🔒'}</span>
+                            <span class="rarity-label-${item.rarity}" style="font-size:0.65rem; letter-spacing:0.1em;">${RARITY_LABEL[item.rarity] || item.rarity.toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <div style="font-size:0.7rem; color:#4a2a5a; letter-spacing:0.06em;">
+                        ACQUIRED ${new Date(item.unlockedAt).toLocaleDateString()}
+                        ${stateText ? ` · <span style="color:${stateColor}">${stateText}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+/* ── main UI init ── */
+function tpInitUI() {
+    const username = tpGetSession();
+    const btn      = document.getElementById('tpHeaderBtn');
+
+    if (!username) {
+        // Logged out
+        document.getElementById('tpLoggedOut').style.display  = 'block';
+        document.getElementById('tpLoggedIn').style.display   = 'none';
+        document.getElementById('tpInvLoggedOut').style.display = 'block';
+        document.getElementById('tpInvLoggedIn').style.display  = 'none';
+        btn.textContent = 'JOIN TODD\'S PEOPLE';
+        btn.classList.remove('joined');
+        return;
+    }
+
+    const user = tpGetUser(username);
+    if (!user) { tpClearSession(); tpInitUI(); return; }
+
+    // Logged in
+    document.getElementById('tpLoggedOut').style.display  = 'none';
+    document.getElementById('tpLoggedIn').style.display   = 'block';
+    document.getElementById('tpInvLoggedOut').style.display = 'none';
+    document.getElementById('tpInvLoggedIn').style.display  = 'block';
+
+    btn.textContent = '✓ ' + user.username;
+    btn.classList.add('joined');
+
+    document.getElementById('tpUsername').textContent = user.username;
+    tpRefreshPoints(user.points);
+
+    /* backfill fields for accounts created before these existed */
+    if (!user.pointsHistory) { user.pointsHistory = []; tpSaveUser(username, user); }
+    if (!user.streak)        { user.streak = 0;          tpSaveUser(username, user); }
+    backfillAccount(username);
+    updatePassStatusUI();
+
+    // Daily reward state
+    if (user.lastDailyReward === todayStr()) {
+        document.getElementById('tpDailyBtn').style.display  = 'none';
+        document.getElementById('tpDailyDone').style.display = 'block';
+        startDailyCooldown(user.lastDailyReward);
+    } else {
+        document.getElementById('tpDailyBtn').style.display  = 'block';
+        document.getElementById('tpDailyDone').style.display = 'none';
+    }
+
+    renderTPShop(user);
+    renderTPInventory(user);
+    renderTPPointsHistory(user);
+    renderStreakBadge(user);
+    renderDailyObjectives();
+    updateWalletUI(username);
+    updateTreasuryDisplay();
+
+    /* update daily claim button label to show true total */
+    const collBonusForLabel = getCollectorDailyBonus(getCollectorLevel(user.inventory).level);
+    const passBonusForLabel = isPassActive() ? PASS_DAILY_BONUS : 0;
+    const totalDailyLabel   = 5 + collBonusForLabel + passBonusForLabel;
+    const dailyBtn = document.querySelector('#tpDailyBtn button');
+    if (dailyBtn) dailyBtn.textContent = 'CLAIM DAILY +' + totalDailyLabel + ' PTS';
+}
+
+/* ── render points history log ── */
+function renderTPPointsHistory(user) {
+    const el = document.getElementById('tpPointsHistory');
+    if (!el) return;
+    const history = (user.pointsHistory || []).slice(0, 8);
+    if (!history.length) { el.innerHTML = '<div style="color:#3a2a4a;font-size:0.78rem;">No transactions yet.</div>'; return; }
+    el.innerHTML = history.map(h => {
+        const sign  = h.amount >= 0 ? '+' : '';
+        const color = h.amount >= 0 ? '#00ff41' : '#c026d3';
+        const date  = new Date(h.date).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(192,38,211,0.08);">
+            <span style="font-size:0.75rem;color:#7a5a8a;letter-spacing:0.04em;">${escapeHtml(h.reason)}</span>
+            <span style="font-size:0.82rem;color:${color};letter-spacing:0.06em;white-space:nowrap;margin-left:8px;">${sign}${h.amount} &nbsp;<span style="font-size:0.62rem;color:#3a2a4a;">${date}</span></span>
+        </div>`;
+    }).join('');
+}
+
+/* ── render streak badge ── */
+function renderStreakBadge(user) {
+    const el = document.getElementById('tpStreakBadge');
+    if (!el) return;
+    const s = user.streak || 0;
+    if (s < 2) { el.style.display = 'none'; return; }
+    el.style.display = 'inline-block';
+    let label, color;
+    if (s >= 30) { label = '🔥 ' + s + 'D STREAK'; color = '#ffd700'; }
+    else if (s >= 7) { label = '🔥 ' + s + 'D STREAK'; color = '#c026d3'; }
+    else             { label = '⚡ ' + s + 'D STREAK'; color = '#00ff41'; }
+    el.textContent = label;
+    el.style.color      = color;
+    el.style.borderColor = color;
+    el.style.boxShadow  = '0 0 8px ' + color + '44';
+}
+
+/* ── item detail modal ── */
+function openItemDetail(itemId, context) {
+    /* resolve data — could be a catalog item (shop) or inventory instance */
+    const username = tpGetSession();
+    const user     = username ? tpGetUser(username) : null;
+    if (context === 'shop' && username) completeDailyObj('browse_shop');
+    const invItem  = user && user.inventory.find(i => i.id === itemId);
+
+    /* for shop view, itemId is always a catalog id; for inventory it could be dynamic (drop win) */
+    const baseId   = itemId.replace(/^drop_win_/, '').replace(/^luck_boost_\d+/, 'entry_boost');
+    const catItem  = catalogLookup(baseId) || catalogLookup(itemId);
+
+    /* merge catalog data with inventory instance */
+    const data = Object.assign({}, catItem || {}, invItem || {});
+    if (!data.name) return; /* unknown item, skip */
+
+    const isCash     = data.type === 'cash';
+    const isLegendary = data.rarity === 'legendary';
+    const icon       = data.icon || catItem?.icon || '◈';
+    const iconClass  = itemIconClass(data.rarity, data.type);
+
+    /* fill modal content */
+    /* large icon */
+    const idIcon = document.getElementById('idIcon');
+    idIcon.className = 'item-detail-icon-large ' + iconClass;
+    idIcon.style.fontSize = '2.8rem';
+    idIcon.textContent = icon;
+
+    document.getElementById('idName').textContent = data.name;
+
+    /* rarity badge */
+    const rb = document.getElementById('idRarityBadge');
+    rb.textContent = RARITY_LABEL[data.rarity] || (data.rarity || '').toUpperCase();
+    const rc = data.rarity === 'legendary' ? '#ffd700' : data.rarity === 'rare' ? '#7b8ff5' : '#00ff41';
+    rb.style.borderColor = rc; rb.style.color = rc; rb.style.boxShadow = '0 0 8px ' + rc + '44';
+
+    /* type badge */
+    const tb = document.getElementById('idTypeBadge');
+    const tc = TYPE_COLOR[data.type] || '#9a7aaa';
+    tb.textContent = TYPE_LABEL[data.type] || 'ITEM';
+    tb.style.borderColor = tc; tb.style.color = tc;
+
+    /* flavor */
+    const flavorEl = document.getElementById('idFlavor');
+    flavorEl.textContent = data.flavor || '';
+    flavorEl.style.display = data.flavor ? 'block' : 'none';
+
+    /* cost / value */
+    let costStr = catItem ? catItem.cost + ' PTS' : '—';
+    if (isCash && data.cashValue) costStr = '$' + (data.cashValue / 100).toFixed(2) + ' VALUE · ' + (catItem ? catItem.cost + ' PTS' : '');
+    document.getElementById('idCost').textContent = costStr;
+    document.getElementById('idCost').style.color = isCash ? '#ffd700' : '#c026d3';
+
+    /* state */
+    let stateText = context === 'shop' ? (invItem ? 'OWNED' : (user && catItem && user.points >= catItem.cost ? 'AFFORDABLE' : 'NOT OWNED')) : '—';
+    let stateColor = '#7a5a8a';
+    if (invItem) {
+        const rs = getRedemptionState(invItem);
+        stateText  = rs.label;
+        stateColor = rs.color;
+    }
+    const stateEl = document.getElementById('idState');
+    stateEl.textContent  = stateText;
+    stateEl.style.color  = stateColor;
+
+    /* desc */
+    document.getElementById('idDesc').innerHTML = escapeHtml(data.desc || '') +
+        (data.benefit ? `<br><span style="color:#5a3a7a;font-size:0.82rem;display:block;margin-top:6px;">${escapeHtml(data.benefit)}</span>` : '');
+
+    /* ability */
+    document.getElementById('idAbility').textContent = data.ability || 'Passive — no active effect.';
+
+    /* trade lock */
+    const tradeEl = document.getElementById('idTrade');
+    if (invItem) {
+        const lock = tradeLockLabel(invItem);
+        tradeEl.textContent = lock.text;
+        tradeEl.style.color = lock.unlocked ? '#00ff41' : '#ff7070';
+        document.getElementById('idTradeBlock').style.borderColor = lock.unlocked ? 'rgba(0,255,65,0.2)' : 'rgba(255,100,100,0.2)';
+    } else {
+        tradeEl.textContent = 'ACQUIRE ITEM TO SEE TRADE STATUS';
+        tradeEl.style.color = '#3a2a4a';
+    }
+
+    /* action button (inventory context only) */
+    const actionEl = document.getElementById('idActionBlock');
+    if (context === 'inventory' && invItem) {
+        const rs = getRedemptionState(invItem);
+        if (rs.state === 'requestable') {
+            const fn        = isCash ? `requestRedemption('${itemId}')` : `redeemItem('${itemId}')`;
+            const btnColor  = isCash ? '#ffd700' : '#c026d3';
+            const btnBorder = isCash ? 'rgba(255,215,0,0.5)' : 'rgba(192,38,211,0.5)';
+            const btnLabel  = isCash ? 'REQUEST REDEMPTION' : 'USE ITEM';
+            actionEl.innerHTML = `<button onclick="${fn}"
+                style="width:100%;background:transparent;border:1px solid ${btnBorder};color:${btnColor};
+                       font-family:'VT323',monospace;font-size:1rem;padding:10px 0;cursor:pointer;
+                       letter-spacing:0.14em;transition:all 0.2s;"
+                onmouseover="this.style.background='${btnColor}22';"
+                onmouseout="this.style.background='transparent';">${btnLabel}</button>`;
+        } else if (rs.state === 'pending') {
+            actionEl.innerHTML = `<div style="text-align:center;font-size:0.88rem;color:#ffd700;letter-spacing:0.1em;padding:8px 0;border:1px solid rgba(255,215,0,0.2);">↗ PENDING REVIEW</div>`;
+        } else if (rs.state === 'approved') {
+            actionEl.innerHTML = `<div style="text-align:center;font-size:0.88rem;color:#7b8ff5;letter-spacing:0.1em;padding:8px 0;border:1px solid rgba(123,143,245,0.2);">✓ APPROVED — PROCESSING</div>`;
+        } else if (rs.state === 'completed') {
+            actionEl.innerHTML = `<div style="text-align:center;font-size:0.88rem;color:#3a5a3a;letter-spacing:0.1em;padding:8px 0;">✓ COMPLETE</div>`;
+        } else {
+            actionEl.innerHTML = '';
+        }
+    } else if (context === 'shop' && !invItem && user && catItem && user.points >= catItem.cost) {
+        actionEl.innerHTML = `<button onclick="unlockReward('${itemId}');closeItemDetail();"
+            style="width:100%;background:transparent;border:1px solid rgba(192,38,211,0.5);color:#c026d3;
+                   font-family:'VT323',monospace;font-size:1rem;padding:10px 0;cursor:pointer;
+                   letter-spacing:0.14em;transition:all 0.2s;"
+            onmouseover="this.style.background='rgba(192,38,211,0.1)';"
+            onmouseout="this.style.background='transparent';">UNLOCK — ${catItem ? catItem.cost : ''} PTS</button>`;
+    } else {
+        actionEl.innerHTML = '';
+    }
+
+    /* frame the modal box */
+    const box = document.getElementById('itemDetailBox');
+    box.className = 'item-detail-box p-8' + (isLegendary ? ' legendary-frame' : '') + (isCash && !isLegendary ? ' cash-frame' : '');
+    box.style.borderColor = isLegendary ? 'rgba(255,215,0,0.65)' : isCash ? 'rgba(255,215,0,0.5)' : 'rgba(192,38,211,0.6)';
+
+    document.getElementById('itemDetailModal').classList.remove('hidden');
+}
+function closeItemDetail() {
+    document.getElementById('itemDetailModal').classList.add('hidden');
+}
+document.getElementById('itemDetailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeItemDetail();
+});
+
+/* ── backdrop click closes modal ── */
+document.getElementById('tpModal').addEventListener('click', function(e) {
+    if (e.target === this) closeTPModal();
+});
+
+/* ═══════════════════════════════════════════
+   CONFETTI ENGINE
+   ═══════════════════════════════════════════ */
+function launchConfetti() {
+    var canvas = document.getElementById('confettiCanvas');
+    var ctx    = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+
+    var colors  = ['#c026d3','#00ff41','#ffd700','#7b8ff5','#ffffff'];
+    var pieces  = Array.from({length: 90}, function(_, i) {
+        return {
+            x:   Math.random() * canvas.width,
+            y:   -10 - Math.random() * canvas.height * 0.4,
+            r:   Math.random() * 5 + 3,
+            d:   Math.random() * 2 + 1,
+            color: colors[i % colors.length],
+            tilt: Math.random() * 10 - 5,
+            tiltSpeed: Math.random() * 0.1 + 0.05,
+            angle: Math.random() * Math.PI * 2
+        };
+    });
+
+    var frame = 0, maxFrames = 180;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(function(p) {
+            p.angle += p.tiltSpeed;
+            p.y += p.d * 2.5;
+            p.x += Math.sin(p.angle) * 1.5;
+            p.tilt = Math.sin(p.angle) * 12;
+            ctx.beginPath();
+            ctx.lineWidth = p.r;
+            ctx.strokeStyle = p.color;
+            ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+            ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+            ctx.stroke();
+        });
+        frame++;
+        if (frame < maxFrames) {
+            requestAnimationFrame(draw);
+        } else {
+            canvas.style.display = 'none';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+    draw();
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS MODAL
+   ═══════════════════════════════════════════ */
+function openSettingsModal() {
+    const username = tpGetSession();
+    if (!username) return;
+    const user = tpGetUser(username);
+    if (!user) return;
+
+    document.getElementById('settingsUsername').textContent = user.username;
+    document.getElementById('settingsEmail').value = user.email || '';
+    document.getElementById('settingsJoined').textContent =
+        new Date(user.joinDate).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('settingsSaveMsg').style.display = 'none';
+    updateWalletUI(username);
+    document.getElementById('settingsModal').classList.remove('hidden');
+}
+function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.add('hidden');
+}
+function saveSettings() {
+    const username = tpGetSession();
+    if (!username) return;
+    const user  = tpGetUser(username);
+    if (!user) return;
+    user.email  = document.getElementById('settingsEmail').value.trim();
+    tpSaveUser(username, user);
+    const msg = document.getElementById('settingsSaveMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 2000);
+}
+document.getElementById('settingsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSettingsModal();
+});
+
+/* ═══════════════════════════════════════════
+   DAILY COOLDOWN COUNTDOWN
+   ═══════════════════════════════════════════ */
+var dailyCooldownInterval = null;
+
+function startDailyCooldown(lastClaimDateStr) {
+    clearInterval(dailyCooldownInterval);
+    const el = document.getElementById('dailyCooldown');
+    if (!el) return;
+
+    /* next claim = midnight after lastClaimDate */
+    const next = new Date(lastClaimDateStr);
+    next.setDate(next.getDate() + 1);
+    next.setHours(0, 0, 0, 0);
+
+    function tick() {
+        const ms = next - new Date();
+        if (ms <= 0) {
+            clearInterval(dailyCooldownInterval);
+            /* re-enable daily button */
+            document.getElementById('tpDailyBtn').style.display = 'block';
+            document.getElementById('tpDailyDone').style.display = 'none';
+            return;
+        }
+        const h = String(Math.floor(ms / 3600000)).padStart(2,'0');
+        const m = String(Math.floor((ms % 3600000) / 60000)).padStart(2,'0');
+        const s = String(Math.floor((ms % 60000) / 1000)).padStart(2,'0');
+        if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    tick();
+    dailyCooldownInterval = setInterval(tick, 1000);
+}
+
+
+/* ═══════════════════════════════════════════
+   DAILY OBJECTIVES ENGINE
+   ═══════════════════════════════════════════ */
+const DAILY_OBJ_KEY  = 'tp_daily_obj_';
+const DAILY_OBJ_DEFS = [
+    { id: 'claim_daily',  label: 'Claim daily reward',  pts: 1 },
+    { id: 'enter_drop',   label: 'Enter a live drop',   pts: 1 },
+    { id: 'browse_shop',  label: 'Browse the reward shop', pts: 1 },
+];
+const DAILY_OBJ_BONUS = 2; /* bonus when all 3 completed */
+
+function getDailyObjProgress() {
+    return JSON.parse(localStorage.getItem(DAILY_OBJ_KEY + todayStr()) || '{}');
+}
+
+function completeDailyObj(objId) {
+    const username = tpGetSession();
+    if (!username) return;
+    const progress = getDailyObjProgress();
+    if (progress[objId]) return; /* already done today */
+    progress[objId] = true;
+    localStorage.setItem(DAILY_OBJ_KEY + todayStr(), JSON.stringify(progress));
+
+    const def = DAILY_OBJ_DEFS.find(d => d.id === objId);
+    if (!def) return;
+    tpAddPoints(username, def.pts, 'Daily objective: ' + def.label);
+
+    const allDone = DAILY_OBJ_DEFS.every(d => progress[d.id]);
+    if (allDone) {
+        tpAddPoints(username, DAILY_OBJ_BONUS, 'Daily objectives complete — bonus');
+        tpShowLuckToast('✓ ALL DAILY OBJECTIVES — +' + (DAILY_OBJ_DEFS.reduce((s, d) => s + d.pts, 0) + DAILY_OBJ_BONUS) + ' PTS TOTAL');
+    }
+
+    renderDailyObjectives();
+    const u = tpGetUser(username);
+    if (u) renderTPPointsHistory(u);
+}
+
+function renderDailyObjectives() {
+    const listEl  = document.getElementById('dailyObjList');
+    const bonusEl = document.getElementById('dailyObjBonus');
+    if (!listEl) return;
+    const progress = getDailyObjProgress();
+    const allDone  = DAILY_OBJ_DEFS.every(d => progress[d.id]);
+    if (bonusEl) bonusEl.style.display = allDone ? 'inline-block' : 'none';
+    listEl.innerHTML = DAILY_OBJ_DEFS.map(def => {
+        const done = !!progress[def.id];
+        return `<div class="daily-obj${done ? ' done' : ''}">
+            <span class="obj-check">${done ? '✓' : '○'}</span>
+            <span>${def.label}</span>
+            <span class="obj-pts">${done ? '' : '+'}${def.pts} PT${def.pts !== 1 ? 'S' : ''}</span>
+        </div>`;
+    }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   COLLECTOR LEVEL BENEFITS
+   ═══════════════════════════════════════════ */
+
+/* Daily bonus pts by collector level */
+const COLLECTOR_DAILY_BONUS = [0, 1, 2, 3, 5, 8];
+
+/* Luck chance bonus by collector level (+% per level) */
+const COLLECTOR_LUCK_BONUS  = [0, 0.02, 0.04, 0.06, 0.10, 0.15];
+
+/* Human-readable benefit string for each level */
+const COLLECTOR_BENEFIT_LABEL = [
+    'Base access only.',
+    '+1 pt daily bonus · Early adopter status.',
+    '+2 pt daily bonus · 4% higher luck chance.',
+    '+3 pt daily bonus · 6% higher luck chance.',
+    '+5 pt daily bonus · 10% higher luck chance · Drop priority.',
+    '+8 pt daily bonus · 15% higher luck chance · Phantom-tier eligible.',
+];
+
+function getCollectorDailyBonus(level) {
+    return COLLECTOR_DAILY_BONUS[Math.min(level, COLLECTOR_DAILY_BONUS.length - 1)] || 0;
+}
+
+function getCollectorLuckBonus(level) {
+    return COLLECTOR_LUCK_BONUS[Math.min(level, COLLECTOR_LUCK_BONUS.length - 1)] || 0;
+}
+
+function renderCollectorBenefits(user) {
+    const el = document.getElementById('collectorBenefitRow');
+    if (!el) return;
+    const coll = getCollectorLevel(user.inventory);
+    const lvl  = coll.level;
+    const cur  = COLLECTOR_BENEFIT_LABEL[lvl] || '';
+    const nxt  = COLLECTOR_BENEFIT_LABEL[lvl + 1];
+    el.innerHTML = `<span style="color:${coll.color};">LVL ${lvl}: ${cur}</span>`
+        + (nxt ? ` <span style="color:#2a1a3a;"> → Next: ${nxt}</span>` : '');
+}
+
+/* ═══════════════════════════════════════════
+   LUCK BONUS SYSTEM
+   ═══════════════════════════════════════════ */
+const LUCK_EVENTS = [
+    { id: 'pts_3',     label: '🎲 LUCKY +3 PTS',       type: 'points',  value: 3,  weight: 5 },
+    { id: 'pts_5',     label: '🎲 LUCKY +5 PTS',       type: 'points',  value: 5,  weight: 3 },
+    { id: 'pts_10',    label: '🎲 LUCKY +10 PTS',      type: 'points',  value: 10, weight: 1 },
+    { id: 'free_entry',label: '🎰 FREE DROP ENTRY',    type: 'entry',   value: 1,  weight: 2 },
+    { id: 'boost_item',label: '⚡ BONUS BOOST ITEM',   type: 'item',    value: 0,  weight: 1 },
+];
+
+function pickLuckEvent() {
+    const pool = [];
+    LUCK_EVENTS.forEach(e => { for (let i = 0; i < e.weight; i++) pool.push(e); });
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* Roll luck — base 18% chance, boosted by collector level */
+function rollLuck(username, baseChance) {
+    baseChance = baseChance !== undefined ? baseChance : 0.18;
+    const user = tpGetUser(username);
+    if (!user) return;
+    const collLevel  = getCollectorLevel(user.inventory).level;
+    const finalChance = baseChance + getCollectorLuckBonus(collLevel);
+    if (Math.random() > finalChance) return;
+    const evt = pickLuckEvent();
+
+    if (evt.type === 'points') {
+        tpAddPoints(username, evt.value, evt.label);
+    } else if (evt.type === 'entry') {
+        /* grant a free-entry token stored in user.freeEntries */
+        user.freeEntries = (user.freeEntries || 0) + 1;
+        tpSaveUser(username, user);
+        tpAddPoints(username, 0, evt.label + ' GRANTED'); /* log it */
+    } else if (evt.type === 'item') {
+        user.inventory.unshift({
+            id:          'luck_boost_' + Date.now(),
+            name:        'Entry Boost x1',
+            rarity:      'common',
+            type:        'boost',
+            cashValue:   null,
+            redeemState: 'pending',
+            unlockedAt:  new Date().toISOString(),
+        });
+        tpSaveUser(username, user);
+    }
+
+    /* show toast */
+    tpShowLuckToast(evt.label);
+    const u2 = tpGetUser(username);
+    if (u2) { renderTPPointsHistory(u2); renderTPInventory(u2); }
+}
+
+function tpShowLuckToast(msg) {
+    let el = document.getElementById('luckToast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'luckToast';
+        el.style.cssText = [
+            'position:fixed', 'bottom:80px', 'right:20px', 'z-index:9999',
+            'background:rgba(0,0,0,0.92)', 'border:1px solid rgba(255,215,0,0.5)',
+            'color:#ffd700', 'font-family:VT323,monospace', 'font-size:1rem',
+            'letter-spacing:0.12em', 'padding:10px 18px', 'pointer-events:none',
+            'box-shadow:0 0 18px rgba(255,215,0,0.25)', 'opacity:0',
+            'transition:opacity 0.35s ease',
+        ].join(';');
+        document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = '1';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.opacity = '0'; }, 3200);
+}
+
+/* ── boot ── */
+tpInitUI();
+
+/* ═══════════════════════════════════════════════════════
+   ECONOMY ENGINE — CLICKS · POOL · DROPS
+   ═══════════════════════════════════════════════════════ */
+
+const EC_POOL_KEY   = 'tp_revenue_pool_cents';
+const EC_CLICKS_KEY = 'tp_click_log';
+const EC_DROPS_KEY  = 'tp_drops';
+
+/* value per click source (cents) */
+const CLICK_VALUES = { popular_post: 2, reward_shop: 1 };
+
+/* Drop catalog — rotates after each completion
+ * rewardType: 'item' | 'cash' | 'boost' | 'access'
+ * cashValue (cents): only set when rewardType === 'cash'
+ * weight: higher = more likely to appear (items weight more than cash)
+ */
+const DROP_TEMPLATES = [
+    /* common item drops — frequent */
+    { name: 'SIGNAL CACHE',    entryCost: 5,  maxEntries: 20, rewardName: 'Signal Chip',   rewardRarity: 'common',    rewardType: 'item',   durationMs: 20 * 60 * 1000, weight: 4 },
+    { name: 'BADGE DROP',      entryCost: 8,  maxEntries: 15, rewardName: 'Static Badge',   rewardRarity: 'common',    rewardType: 'item',   durationMs: 25 * 60 * 1000, weight: 4 },
+    { name: 'BOOST WINDOW',    entryCost: 10, maxEntries: 12, rewardName: 'Entry Boost x1', rewardRarity: 'common',    rewardType: 'boost',  durationMs: 20 * 60 * 1000, weight: 3 },
+    /* rare item drops — moderate */
+    { name: 'NEON DROP',       entryCost: 10, maxEntries: 12, rewardName: 'Neon Blade',     rewardRarity: 'rare',      rewardType: 'item',   durationMs: 30 * 60 * 1000, weight: 3 },
+    { name: 'ACCESS PULL',     entryCost: 15, maxEntries: 10, rewardName: 'Ghost Key',      rewardRarity: 'rare',      rewardType: 'access', durationMs: 30 * 60 * 1000, weight: 2 },
+    /* rare cash drops — less frequent */
+    { name: 'QUARTER DROP',    entryCost: 20, maxEntries: 8,  rewardName: '$0.25 Reward',   rewardRarity: 'rare',      rewardType: 'cash',   cashValue: 25,  durationMs: 35 * 60 * 1000, weight: 2 },
+    { name: 'HALF DOLLAR',     entryCost: 30, maxEntries: 6,  rewardName: '$0.50 Reward',   rewardRarity: 'rare',      rewardType: 'cash',   cashValue: 50,  durationMs: 40 * 60 * 1000, weight: 1 },
+    /* legendary drops — rare */
+    { name: 'PHANTOM WINDOW',  entryCost: 25, maxEntries: 8,  rewardName: 'Phantom Edge',   rewardRarity: 'legendary', rewardType: 'item',   durationMs: 45 * 60 * 1000, weight: 1 },
+    { name: 'VOID PULL',       entryCost: 20, maxEntries: 10, rewardName: 'Void Crystal',   rewardRarity: 'legendary', rewardType: 'item',   durationMs: 40 * 60 * 1000, weight: 1 },
+    /* legendary cash drop — very rare */
+    { name: 'DOLLAR DROP',     entryCost: 40, maxEntries: 5,  rewardName: '$1.00 Reward',   rewardRarity: 'legendary', rewardType: 'cash',   cashValue: 100, durationMs: 60 * 60 * 1000, weight: 1 },
+];
+
+/* weighted random template picker — items appear more than cash */
+function ecPickDropTemplate(completedCount) {
+    /* build weighted pool */
+    const pool = [];
+    DROP_TEMPLATES.forEach(t => { for (let i = 0; i < (t.weight || 1); i++) pool.push(t); });
+    /* every ~8 drops, force a cash drop for excitement */
+    if ((completedCount + 1) % 8 === 0) {
+        const cashTemplates = DROP_TEMPLATES.filter(t => t.rewardType === 'cash');
+        return cashTemplates[Math.floor(Math.random() * cashTemplates.length)];
+    }
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* ── pool helpers ── */
+function ecGetPool()       { return parseInt(localStorage.getItem(EC_POOL_KEY) || '0', 10); }
+function ecSetPool(cents)  { localStorage.setItem(EC_POOL_KEY, String(cents)); }
+function ecPoolDollars()   { return (ecGetPool() / 100).toFixed(2); }
+
+function ecAddToPool(cents) {
+    ecSetPool(ecGetPool() + cents);
+    updatePoolDisplay(true);
+}
+
+function updatePoolDisplay(bump) {
+    const el = document.getElementById('livePoolDisplay');
+    if (!el) return;
+    el.textContent = 'POOL: $' + ecPoolDollars();
+    if (bump) {
+        el.classList.add('bump');
+        setTimeout(() => el.classList.remove('bump'), 900);
+    }
+}
+
+/* ── click tracking ── */
+function trackClick(linkId) {
+    const username   = tpGetSession();
+    const valueCents = CLICK_VALUES[linkId] || 1;
+    const clicks     = JSON.parse(localStorage.getItem(EC_CLICKS_KEY) || '[]');
+    clicks.push({ userId: username || 'guest', linkId, timestamp: new Date().toISOString(), valueCents });
+    /* keep last 500 events max */
+    if (clicks.length > 500) clicks.splice(0, clicks.length - 500);
+    localStorage.setItem(EC_CLICKS_KEY, JSON.stringify(clicks));
+    ecAddToPool(valueCents);
+
+    /* award 1 pt to signed-in user per qualifying click (max 10/day) */
+    if (username) {
+        const todayKey = 'tp_click_pts_' + todayStr();
+        const todayPts = parseInt(localStorage.getItem(todayKey) || '0', 10);
+        if (todayPts < 10) {
+            localStorage.setItem(todayKey, String(todayPts + 1));
+            tpAddPoints(username, 1, 'Click reward: ' + linkId);
+            const u = tpGetUser(username);
+            if (u) renderTPPointsHistory(u);
+        }
+    }
+}
+
+/* ── drop helpers ── */
+function ecGetDrops()         { return JSON.parse(localStorage.getItem(EC_DROPS_KEY) || '[]'); }
+function ecSaveDrops(drops)   { localStorage.setItem(EC_DROPS_KEY, JSON.stringify(drops)); }
+
+function ecGetActiveDrop() {
+    const drops = ecGetDrops();
+    return drops.find(d => d.status === 'open') || null;
+}
+
+function ecSeedDrop() {
+    const drops     = ecGetDrops();
+    const completed = drops.filter(d => d.status === 'complete').length;
+    const tmpl      = ecPickDropTemplate(completed);
+    const newDrop   = {
+        id:          'drop_' + Date.now(),
+        name:         tmpl.name,
+        entryCost:    tmpl.entryCost,
+        maxEntries:   tmpl.maxEntries,
+        entries:      [],
+        endTime:      new Date(Date.now() + tmpl.durationMs).toISOString(),
+        status:       'open',
+        winner:       null,
+        rewardName:   tmpl.rewardName,
+        rewardRarity: tmpl.rewardRarity,
+        rewardType:   tmpl.rewardType || 'item',
+        cashValue:    tmpl.cashValue  || null,
+    };
+    drops.push(newDrop);
+    ecSaveDrops(drops);
+    return newDrop;
+}
+
+function ecResolveDrop(drop) {
+    const drops = ecGetDrops();
+    const idx   = drops.findIndex(d => d.id === drop.id);
+    if (idx < 0) return;
+
+    if (drop.entries.length === 0) {
+        /* no participants — just close and seed next */
+        drops[idx].status = 'complete';
+        drops[idx].winner = null;
+        ecSaveDrops(drops);
+        setTimeout(() => { ecSeedDrop(); renderDrop(); }, 3000);
+        return;
+    }
+
+    /* pick random winner */
+    const winner = drop.entries[Math.floor(Math.random() * drop.entries.length)];
+    drops[idx].status = 'complete';
+    drops[idx].winner = winner;
+    ecSaveDrops(drops);
+
+    /* award reward to winner */
+    const winUser = tpGetUser(winner);
+    if (winUser && !winUser.inventory.find(i => i.id === 'drop_win_' + drop.id)) {
+        const catRef = catalogLookup(drop.rewardName) || {};
+        winUser.inventory.unshift({
+            id:          'drop_win_' + drop.id,
+            name:         drop.rewardName + ' [DROP WIN]',
+            rarity:       drop.rewardRarity,
+            type:         drop.rewardType || 'item',
+            cashValue:    drop.cashValue  || null,
+            icon:         catRef.icon || '◈',
+            holdMs:       getHoldPeriodMs(drop.rewardRarity, drop.rewardType || 'item'),
+            redeemState:  'pending',
+            unlockedAt:   new Date().toISOString(),
+            ownerId:      winner,
+            tradable:     false,
+        });
+        tpSaveUser(winner, winUser);
+        /* refresh inventory if that user is logged in */
+        if (tpGetSession() === winner) renderTPInventory(winUser);
+    }
+
+    /* seed next drop after 5s */
+    setTimeout(() => { ecSeedDrop(); renderDrop(); }, 5000);
+}
+
+/* ── enter a drop ── */
+function enterDrop(dropId) {
+    const username = tpGetSession();
+    if (!username) { openTPModal(); return; }
+
+    const drops = ecGetDrops();
+    const idx   = drops.findIndex(d => d.id === dropId);
+    if (idx < 0) return;
+    const drop  = drops[idx];
+
+    if (drop.status !== 'open') return;
+    if (drop.entries.includes(username)) {
+        const dc = document.getElementById('dropContent');
+        if (dc) {
+            let m = document.getElementById('dropInlineMsg');
+            if (!m) { m = document.createElement('div'); m.id = 'dropInlineMsg'; m.style.cssText = 'margin-top:8px;font-size:0.82rem;color:#ffd700;letter-spacing:0.08em;text-align:center;'; dc.appendChild(m); }
+            m.textContent = '✓ YOU\'RE ALREADY IN THIS DROP — GOOD LUCK';
+            clearTimeout(m._t); m._t = setTimeout(() => { m.textContent = ''; }, 3000);
+        }
+        return;
+    }
+
+    const user = tpGetUser(username);
+    if (!user) return;
+    if (user.points < drop.entryCost) {
+        /* show message in drop panel instead of alert */
+        const dc = document.getElementById('dropContent');
+        if (dc) {
+            let m = document.getElementById('dropInlineMsg');
+            if (!m) { m = document.createElement('div'); m.id = 'dropInlineMsg'; m.style.cssText = 'margin-top:8px;font-size:0.82rem;color:#ff4444;letter-spacing:0.08em;text-align:center;'; dc.appendChild(m); }
+            m.textContent = 'NOT ENOUGH POINTS — NEED ' + (drop.entryCost - user.points) + ' MORE';
+            clearTimeout(m._t); m._t = setTimeout(() => { m.textContent = ''; }, 3000);
+        }
+        return;
+    }
+
+    /* use free entry if available (from pass or boost item) */
+    let usedFreeEntry = false;
+    if ((user.freeEntries || 0) > 0) {
+        user.freeEntries -= 1;
+        tpSaveUser(username, user);
+        tpAddPoints(username, 0, 'Free entry used: ' + drop.name);
+        usedFreeEntry = true;
+    }
+    if (!usedFreeEntry) {
+        tpAddPoints(username, -drop.entryCost, 'Drop entry: ' + drop.name);
+    }
+    user = tpGetUser(username);
+
+    drops[idx].entries.push(username);
+    ecSaveDrops(drops);
+
+    /* add to pool */
+    ecAddToPool(drop.entryCost);
+
+    /* complete daily objective for entering a drop */
+    completeDailyObj('enter_drop');
+
+    /* luck roll on drop entry — boosted by collector level */
+    rollLuck(username, 0.12);
+
+    /* check if full */
+    if (drops[idx].entries.length >= drops[idx].maxEntries) {
+        ecResolveDrop(drops[idx]);
+    }
+
+    renderDrop();
+}
+
+/* ── render the active drop ── */
+let dropTimerInterval = null;
+
+function renderDrop() {
+    const container = document.getElementById('dropContent');
+    if (!container) return;
+
+    let drop = ecGetActiveDrop();
+    if (!drop) { drop = ecSeedDrop(); }
+
+    const username  = tpGetSession();
+    const userIn    = username && drop.entries.includes(username);
+    const pct       = Math.round((drop.entries.length / drop.maxEntries) * 100);
+    const spotsLeft = drop.maxEntries - drop.entries.length;
+
+    /* check if time expired */
+    if (new Date() >= new Date(drop.endTime) && drop.status === 'open') {
+        ecResolveDrop(drop);
+    }
+
+    /* check for a recent completed drop with a winner to display */
+    const allDrops   = ecGetDrops();
+    const lastDone   = [...allDrops].reverse().find(d => d.status === 'complete' && d.winner);
+    const justWon    = lastDone && (Date.now() - new Date(lastDone.endTime).getTime() < 60000);
+
+    container.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px;">
+            <div class="drop-stat" style="flex-direction:column; align-items:flex-start;">
+                <div class="drop-stat-label">DROP NAME</div>
+                <div class="drop-stat-value" style="font-size:0.95rem; margin-top:3px;">${drop.name}</div>
+            </div>
+            <div class="drop-stat" style="flex-direction:column; align-items:flex-start;">
+                <div class="drop-stat-label">ENTRY COST</div>
+                <div class="drop-stat-value">${drop.entryCost} PTS</div>
+            </div>
+            <div class="drop-stat" style="flex-direction:column; align-items:flex-start;">
+                <div class="drop-stat-label">REWARD</div>
+                <div class="drop-stat-value rarity-label-${drop.rewardRarity}" style="font-size:0.88rem;">${drop.rewardName}</div>
+                ${drop.rewardType ? `<div style="font-size:0.6rem;color:${TYPE_COLOR[drop.rewardType]||'#9a7aaa'};letter-spacing:0.1em;margin-top:2px;">${TYPE_LABEL[drop.rewardType]||'ITEM'}${drop.cashValue ? ' · $'+(drop.cashValue/100).toFixed(2) : ''}</div>` : ''}
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="font-size:0.72rem; color:#7a4a8a; letter-spacing:0.1em;">ENTRIES: ${drop.entries.length}/${drop.maxEntries}</span>
+            <span style="font-size:0.72rem; color:#7a4a8a; letter-spacing:0.1em;">${spotsLeft} SPOT${spotsLeft !== 1 ? 'S' : ''} LEFT</span>
+        </div>
+        <div class="drop-progress-wrap">
+            <div class="drop-progress-fill" style="width:${pct}%;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; margin-top:8px;">
+            <span style="font-size:0.72rem; color:#7a4a8a; letter-spacing:0.1em;">TIME LEFT</span>
+            <span id="dropCountdown">--:--</span>
+        </div>
+
+        ${drop.status === 'open' ? `
+        <button class="enter-drop-btn" onclick="enterDrop('${drop.id}')"
+                ${userIn ? 'disabled' : ''}>
+            ${userIn ? '✓ YOU\'RE IN — GOOD LUCK' : `ENTER DROP — ${drop.entryCost} PTS`}
+        </button>` : `
+        <div style="text-align:center; color:#7a4a8a; font-size:0.9rem; padding:10px; border:1px solid rgba(192,38,211,0.15);">
+            DROP RESOLVING — NEXT DROP INCOMING...
+        </div>`}
+
+        ${justWon ? `
+        <div class="winner-badge mt-4">
+            ★ LAST WINNER: ${escapeHtml(lastDone.winner)} — WON ${escapeHtml(lastDone.rewardName)}
+        </div>` : ''}
+
+        <div style="margin-top:12px; font-size:0.7rem; color:#3a1a4a; letter-spacing:0.1em; text-align:right; display:flex; justify-content:flex-end; gap:12px;">
+            <span>TYPE: <span style="color:${TYPE_COLOR[drop.rewardType]||'#9a7aaa'}">${TYPE_LABEL[drop.rewardType]||'ITEM'}</span></span>
+            <span>RARITY: <span class="rarity-label-${drop.rewardRarity}">${drop.rewardRarity.toUpperCase()}</span></span>
+        </div>
+    `;
+
+    /* start/reset countdown */
+    if (dropTimerInterval) clearInterval(dropTimerInterval);
+    dropTimerInterval = setInterval(() => {
+        const el = document.getElementById('dropCountdown');
+        if (!el) { clearInterval(dropTimerInterval); return; }
+        const ms  = new Date(drop.endTime) - new Date();
+        if (ms <= 0) {
+            el.textContent = '00:00';
+            clearInterval(dropTimerInterval);
+            return;
+        }
+        const mins = String(Math.floor(ms / 60000)).padStart(2, '0');
+        const secs = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+        el.textContent = mins + ':' + secs;
+        if (ms < 60000) el.classList.add('urgent');
+    }, 1000);
+}
+
+/* ═══════════════════════════════════════════════════════
+   MONETIZATION ENGINE
+   ═══════════════════════════════════════════════════════ */
+
+const MONETIZE_KEY = 'tp_monetize'; /* per-site purchase log */
+const PASS_KEY     = 'tp_pass';     /* active pass record    */
+
+/* ── Boost point packages ── */
+const BOOST_PACKAGES = [
+    { id: 'boost_100',  pts: 100,  priceCents: 199,  label: '100 POINTS',  note: '' },
+    { id: 'boost_300',  pts: 300,  priceCents: 499,  label: '300 POINTS',  note: 'POPULAR' },
+    { id: 'boost_750',  pts: 750,  priceCents: 999,  label: '750 POINTS',  note: 'BEST VALUE' },
+];
+
+/* Pass config */
+const PASS_PRICE_CENTS  = 499;
+const PASS_DURATION_MS  = 30 * 24 * 3600000; /* 30 days */
+const PASS_JOIN_BONUS   = 10;
+const PASS_DAILY_BONUS  = 3;
+
+/* ── storage helpers ── */
+function getMonetizeLog() { return JSON.parse(localStorage.getItem(MONETIZE_KEY) || '[]'); }
+function saveMonetizeLog(log) { localStorage.setItem(MONETIZE_KEY, JSON.stringify(log)); }
+function recordPurchase(type, meta) {
+    const log = getMonetizeLog();
+    log.unshift({ type, meta, timestamp: new Date().toISOString() });
+    if (log.length > 200) log.length = 200;
+    saveMonetizeLog(log);
+}
+
+/* ── pass helpers ── */
+function getPassRecord() { return JSON.parse(localStorage.getItem(PASS_KEY) || 'null'); }
+function savePassRecord(rec) { localStorage.setItem(PASS_KEY, JSON.stringify(rec)); }
+function isPassActive() {
+    const rec = getPassRecord();
+    if (!rec) return false;
+    return rec.status === 'active' && Date.now() < new Date(rec.expiresAt).getTime();
+}
+function passExpiresLabel() {
+    const rec = getPassRecord();
+    if (!rec) return '';
+    return new Date(rec.expiresAt).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+/* ── boost modal open/close/tab ── */
+var _selectedBoostPkg = null;
+
+function openBoostModal() {
+    const modal = document.getElementById('boostModal');
+    modal.classList.remove('hidden');
+    renderBoostPackages();
+    updatePassTab();
+    switchBoostTab('pts');
+}
+function closeBoostModal() {
+    document.getElementById('boostModal').classList.add('hidden');
+    _selectedBoostPkg = null;
+    document.getElementById('boostPtsConfirm').style.display = 'none';
+}
+function switchBoostTab(tab) {
+    const isPts = tab === 'pts';
+    document.getElementById('boostPtsTab').style.display  = isPts ? 'block' : 'none';
+    document.getElementById('boostPassTab').style.display = isPts ? 'none' : 'block';
+    document.getElementById('boostTabPts').style.background  = isPts ? 'rgba(255,215,0,0.1)' : 'transparent';
+    document.getElementById('boostTabPts').style.color        = isPts ? '#ffd700' : '#5a4a2a';
+    document.getElementById('boostTabPass').style.background = isPts ? 'transparent' : 'rgba(255,215,0,0.1)';
+    document.getElementById('boostTabPass').style.color       = isPts ? '#5a4a2a' : '#ffd700';
+}
+document.getElementById('boostModal').addEventListener('click', function(e) {
+    if (e.target === this) closeBoostModal();
+});
+
+/* ── render boost package list ── */
+function renderBoostPackages() {
+    const list = document.getElementById('boostPtsList');
+    if (!list) return;
+    list.innerHTML = BOOST_PACKAGES.map(pkg => {
+        const badge = pkg.note ? `<span style="font-size:0.58rem;color:#ffd700;border:1px solid rgba(255,215,0,0.35);padding:1px 6px;margin-left:8px;letter-spacing:0.1em;">${pkg.note}</span>` : '';
+        const price = '$' + (pkg.priceCents / 100).toFixed(2);
+        return `
+        <div class="boost-product-row ${pkg.note === 'BEST VALUE' ? 'best-value' : ''}" id="boostRow_${pkg.id}"
+             onclick="selectBoostPkg('${pkg.id}')">
+            <span style="color:#e0e0e0;font-size:1rem;letter-spacing:0.06em;">${pkg.label}${badge}</span>
+            <span style="color:#ffd700;font-size:0.95rem;">${price}</span>
+        </div>`;
+    }).join('');
+}
+
+/* ── select a boost package ── */
+function selectBoostPkg(pkgId) {
+    _selectedBoostPkg = BOOST_PACKAGES.find(p => p.id === pkgId);
+    if (!_selectedBoostPkg) return;
+    /* highlight selected row */
+    BOOST_PACKAGES.forEach(p => {
+        const el = document.getElementById('boostRow_' + p.id);
+        if (el) el.classList.toggle('selected', p.id === pkgId);
+    });
+    /* show confirm */
+    const confirmEl = document.getElementById('boostPtsConfirm');
+    const msgEl     = document.getElementById('boostPtsConfirmMsg');
+    msgEl.textContent = 'ADD ' + _selectedBoostPkg.pts + ' PTS FOR $' + (_selectedBoostPkg.priceCents / 100).toFixed(2) + '?';
+    confirmEl.style.display = 'block';
+}
+
+/* ── confirm boost purchase (simulated — Stripe stub) ── */
+function confirmBoostPurchase() {
+    const username = tpGetSession();
+    if (!_selectedBoostPkg) return;
+
+    /* ── STRIPE INTEGRATION POINT ──
+     * Replace the block below with a Stripe Payment Intent call:
+     * stripe.redirectToCheckout({ lineItems: [{ price: PRICE_ID, quantity: 1 }], ... })
+     * On webhook success, call fulfillBoostPurchase(username, pkg.pts, pkg.id)
+     ── */
+
+    /* Simulated fulfilment for testing */
+    fulfillBoostPurchase(username, _selectedBoostPkg.pts, _selectedBoostPkg.id, _selectedBoostPkg.priceCents);
+}
+function cancelBoostPurchase() {
+    _selectedBoostPkg = null;
+    BOOST_PACKAGES.forEach(p => {
+        const el = document.getElementById('boostRow_' + p.id);
+        if (el) el.classList.remove('selected');
+    });
+    document.getElementById('boostPtsConfirm').style.display = 'none';
+}
+
+/* ── fulfil a boost purchase (called after payment confirmed) ── */
+function fulfillBoostPurchase(username, pts, pkgId, priceCents) {
+    if (!username) { openTPModal(); closeBoostModal(); return; }
+
+    /* backfill purchase log on user */
+    const user = tpGetUser(username);
+    if (user) {
+        if (!user.purchases) user.purchases = [];
+        user.purchases.unshift({ type: 'boost_pts', pkgId, pts, priceCents, date: new Date().toISOString() });
+        tpSaveUser(username, user);
+    }
+    recordPurchase('boost_pts', { pkgId, pts, priceCents, username });
+    tpAddPoints(username, pts, '⚡ Boost purchase: ' + pts + ' pts');
+
+    const u2 = tpGetUser(username);
+    if (u2) { renderTPPointsHistory(u2); tpRefreshPoints(u2.points); }
+
+    closeBoostModal();
+    tpShowLuckToast('⚡ +' + pts + ' POINTS ADDED');
+}
+
+/* ── purchase / activate premium pass ── */
+function purchasePass() {
+    const username = tpGetSession();
+
+    /* ── STRIPE INTEGRATION POINT ──
+     * Replace below with Stripe Subscription creation.
+     * On webhook success, call fulfillPassPurchase(username)
+     ── */
+
+    fulfillPassPurchase(username);
+}
+
+function fulfillPassPurchase(username) {
+    if (!username) { openTPModal(); closeBoostModal(); return; }
+    if (isPassActive()) { return; } /* already active */
+
+    const now     = new Date();
+    const expires = new Date(now.getTime() + PASS_DURATION_MS);
+    const record  = {
+        username,
+        status:     'active',
+        purchasedAt: now.toISOString(),
+        expiresAt:   expires.toISOString(),
+        priceCents:  PASS_PRICE_CENTS,
+    };
+    savePassRecord(record);
+    recordPurchase('pass', { username, priceCents: PASS_PRICE_CENTS });
+
+    /* award join bonus and record on user */
+    const user = tpGetUser(username);
+    if (user) {
+        if (!user.premiumPass) user.premiumPass = [];
+        user.premiumPass.unshift({ purchasedAt: now.toISOString(), expiresAt: expires.toISOString() });
+        tpSaveUser(username, user);
+    }
+    tpAddPoints(username, PASS_JOIN_BONUS, '★ Drop Pass activated — welcome bonus');
+
+    updatePassTab();
+    updatePassStatusUI();
+    closeBoostModal();
+    tpShowLuckToast('★ DROP PASS ACTIVATED');
+}
+
+/* ── update pass tab UI state ── */
+function updatePassTab() {
+    const active  = isPassActive();
+    const msgEl   = document.getElementById('passStatusMsg');
+    const btnEl   = document.getElementById('passActionBtn');
+    if (!msgEl || !btnEl) return;
+    if (active) {
+        msgEl.style.display = 'block';
+        msgEl.style.color   = '#ffd700';
+        msgEl.textContent   = '★ PASS ACTIVE — EXPIRES ' + passExpiresLabel();
+        btnEl.textContent   = '★ ACTIVE';
+        btnEl.disabled      = true;
+        btnEl.style.color   = 'rgba(255,215,0,0.35)';
+        btnEl.style.cursor  = 'default';
+    } else {
+        msgEl.style.display = 'none';
+        btnEl.textContent   = 'ACTIVATE PASS';
+        btnEl.disabled      = false;
+        btnEl.style.color   = '#ffd700';
+        btnEl.style.cursor  = 'pointer';
+    }
+}
+
+/* ── update inline pass status in people panel + earn panel ── */
+function updatePassStatusUI() {
+    const active = isPassActive();
+    /* inline badge in people panel */
+    const inlineEl  = document.getElementById('passStatusInline');
+    const inlineBtn = document.getElementById('passInlineBtn');
+    if (inlineEl) {
+        inlineEl.textContent = active ? '★ ACTIVE — EXP ' + passExpiresLabel() : 'NOT ACTIVE';
+        inlineEl.style.color  = active ? '#ffd700' : '#5a4a2a';
+    }
+    if (inlineBtn) {
+        inlineBtn.textContent = active ? 'MANAGE' : 'ACTIVATE';
+    }
+    /* earn panel pass promo */
+    const promoContent = document.getElementById('passPromoContent');
+    if (promoContent && active) {
+        promoContent.innerHTML = `
+            <div class="pass-active-badge" style="margin-bottom:8px;">★ PASS ACTIVE</div>
+            <div style="font-size:0.78rem; color:#7a6a3a; line-height:1.5; margin-bottom:8px;">
+                Expires ${passExpiresLabel()}. Free daily entry and bonuses are active.
+            </div>
+            <div style="font-size:0.68rem; color:#4a3a1a; letter-spacing:0.1em;">
+                Daily +${PASS_DAILY_BONUS} bonus pts · 1 free entry/day
+            </div>`;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SPONSOR TASK SYSTEM
+   ═══════════════════════════════════════════════════════ */
+
+const SPONSOR_KEY = 'tp_sponsor_log';
+const SPONSOR_PTS = 5;
+
+/* Sponsor task rotation — swap URL and description to change partner */
+const SPONSOR_TASKS = [
+    { id: 'partner_x_follow', label: 'Follow @AJORDANWEB3 on X', url: 'https://x.com/ajordanweb3', pts: 5 },
+    { id: 'partner_post',     label: 'Engage with the latest post', url: 'https://x.com/ajordanweb3', pts: 5 },
+];
+
+function todaySponsorKey() { return 'tp_sponsor_' + todayStr(); }
+
+function hasDoneSponsorToday() {
+    return localStorage.getItem(todaySponsorKey()) === '1';
+}
+
+function claimSponsorTask() {
+    const username = tpGetSession();
+    if (hasDoneSponsorToday()) return;
+
+    /* pick today's task by day-of-year rotation */
+    const doy  = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const task = SPONSOR_TASKS[doy % SPONSOR_TASKS.length];
+
+    /* open the partner link */
+    window.open(task.url, '_blank', 'noopener');
+
+    /* mark done */
+    localStorage.setItem(todaySponsorKey(), '1');
+
+    /* log interaction */
+    const log = JSON.parse(localStorage.getItem(SPONSOR_KEY) || '[]');
+    log.unshift({ taskId: task.id, username: username || 'guest', date: new Date().toISOString() });
+    if (log.length > 500) log.length = 500;
+    localStorage.setItem(SPONSOR_KEY, JSON.stringify(log));
+
+    /* award points if signed in */
+    if (username) {
+        tpAddPoints(username, task.pts, 'Partner task: ' + task.label);
+        const u = tpGetUser(username);
+        if (u) renderTPPointsHistory(u);
+        rollLuck(username, 0.25);
+    }
+
+    /* update UI */
+    document.getElementById('sponsorTaskBtn').style.display = 'none';
+    document.getElementById('sponsorDone').style.display    = 'block';
+    if (!username) {
+        document.getElementById('sponsorDone').textContent = '✓ DONE — SIGN IN TO EARN PTS';
+    }
+}
+
+function initSponsorTaskUI() {
+    if (hasDoneSponsorToday()) {
+        const btn  = document.getElementById('sponsorTaskBtn');
+        const done = document.getElementById('sponsorDone');
+        if (btn)  btn.style.display  = 'none';
+        if (done) done.style.display = 'block';
+    }
+    /* populate today's task label */
+    const doy    = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const task   = SPONSOR_TASKS[doy % SPONSOR_TASKS.length];
+    const descEl = document.getElementById('sponsorTaskDesc');
+    if (descEl) descEl.textContent = task.label + ' — earn ' + task.pts + ' pts.';
+}
+
+/* ── pass free entry: applied in claimDaily ── */
+function passFreeDailyEntry(username) {
+    if (!isPassActive()) return;
+    const todayKey = 'tp_pass_entry_' + todayStr();
+    if (localStorage.getItem(todayKey)) return;
+    localStorage.setItem(todayKey, '1');
+
+    const user = tpGetUser(username);
+    if (!user) return;
+    user.freeEntries = (user.freeEntries || 0) + 1;
+    tpSaveUser(username, user);
+    tpShowLuckToast('★ PASS: FREE ENTRY READY');
+}
+
+/* ═══════════════════════════════════════════════════════
+   WALLET ENGINE
+   ═══════════════════════════════════════════════════════ */
+
+function walletAbbrev(addr) {
+    if (!addr || addr.length < 8) return addr || '';
+    return addr.slice(0, 4) + '…' + addr.slice(-4);
+}
+
+function validateSolanaAddress(addr) {
+    return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr);
+}
+
+function saveWalletAddress(username, address) {
+    const user = tpGetUser(username);
+    if (!user) return false;
+    user.walletAddress    = address;
+    user.walletConnectedAt = new Date().toISOString();
+    tpSaveUser(username, user);
+    return true;
+}
+
+function openWalletFlow() {
+    document.getElementById('walletModal').classList.remove('hidden');
+    document.getElementById('walletAddressInput').value = '';
+    const msgEl = document.getElementById('walletConnectMsg');
+    msgEl.style.display = 'none';
+    msgEl.textContent   = '';
+}
+
+function closeWalletModal() {
+    document.getElementById('walletModal').classList.add('hidden');
+}
+
+document.getElementById('walletModal').addEventListener('click', function(e) {
+    if (e.target === this) closeWalletModal();
+});
+
+function connectWalletManual() {
+    const username = tpGetSession();
+    const input    = document.getElementById('walletAddressInput');
+    const msgEl    = document.getElementById('walletConnectMsg');
+    const addr     = (input.value || '').trim();
+
+    if (!addr) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff4444';
+        msgEl.textContent = 'Enter a wallet address.'; return;
+    }
+    if (!validateSolanaAddress(addr)) {
+        msgEl.style.display = 'block'; msgEl.style.color = '#ff4444';
+        msgEl.textContent = 'Invalid Solana address format.'; return;
+    }
+    if (!username) { closeWalletModal(); openTPModal(); return; }
+
+    saveWalletAddress(username, addr);
+    updateWalletUI(username);
+    updateTreasuryDisplay();
+    msgEl.style.display = 'block'; msgEl.style.color = '#00ff41';
+    msgEl.textContent = 'WALLET LINKED ✓';
+    setTimeout(() => closeWalletModal(), 1200);
+}
+
+function connectPhantom() {
+    const msgEl = document.getElementById('walletConnectMsg');
+    if (typeof window.phantom !== 'undefined' && window.phantom.solana) {
+        window.phantom.solana.connect()
+            .then(resp => {
+                const addr     = resp.publicKey.toString();
+                const username = tpGetSession();
+                if (username) { saveWalletAddress(username, addr); updateWalletUI(username); updateTreasuryDisplay(); }
+                msgEl.style.display = 'block'; msgEl.style.color = '#00ff41';
+                msgEl.textContent = 'PHANTOM CONNECTED ✓ ' + walletAbbrev(addr);
+                setTimeout(() => closeWalletModal(), 1400);
+            })
+            .catch(() => {
+                msgEl.style.display = 'block'; msgEl.style.color = '#ff4444';
+                msgEl.textContent = 'Connection cancelled.';
+            });
+    } else {
+        msgEl.style.display = 'block'; msgEl.style.color = '#4a3a5a';
+        msgEl.textContent = 'Phantom not detected. Paste address above instead.';
+    }
+}
+
+function connectSolflare() {
+    const msgEl = document.getElementById('walletConnectMsg');
+    if (typeof window.solflare !== 'undefined' && window.solflare.isSolflare) {
+        window.solflare.connect()
+            .then(() => {
+                const addr     = window.solflare.publicKey.toString();
+                const username = tpGetSession();
+                if (username) { saveWalletAddress(username, addr); updateWalletUI(username); updateTreasuryDisplay(); }
+                msgEl.style.display = 'block'; msgEl.style.color = '#00ff41';
+                msgEl.textContent = 'SOLFLARE CONNECTED ✓ ' + walletAbbrev(addr);
+                setTimeout(() => closeWalletModal(), 1400);
+            })
+            .catch(() => {
+                msgEl.style.display = 'block'; msgEl.style.color = '#ff4444';
+                msgEl.textContent = 'Connection cancelled.';
+            });
+    } else {
+        msgEl.style.display = 'block'; msgEl.style.color = '#4a3a5a';
+        msgEl.textContent = 'Solflare not detected. Paste address above instead.';
+    }
+}
+
+function copyWalletAddress() {
+    const username = tpGetSession();
+    if (!username) return;
+    const user = tpGetUser(username);
+    if (!user || !user.walletAddress) return;
+    const addr = user.walletAddress;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(addr).then(() => tpShowLuckToast('WALLET ADDRESS COPIED'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = addr; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        tpShowLuckToast('WALLET ADDRESS COPIED');
+    }
+}
+
+function updateWalletUI(username) {
+    const user = username ? tpGetUser(username) : null;
+    const addr = user && user.walletAddress;
+
+    /* panel wallet block */
+    const dot      = document.getElementById('walletDot');
+    const label    = document.getElementById('walletStatusLabel');
+    const btn      = document.getElementById('walletActionBtn');
+    const addrRow  = document.getElementById('walletAddressRow');
+    const addrPill = document.getElementById('walletAddressPill');
+    const netRow   = document.getElementById('walletNetworkRow');
+
+    if (addr) {
+        if (dot)      { dot.className = 'wallet-dot connected'; }
+        if (label)    { label.textContent = 'CONNECTED'; label.style.color = '#00ff41'; }
+        if (btn)      { btn.textContent = 'CHANGE'; }
+        if (addrRow)  { addrRow.style.display = 'block'; }
+        if (addrPill) { addrPill.textContent = walletAbbrev(addr); }
+        if (netRow)   { netRow.style.display = 'block'; netRow.textContent = 'NETWORK: SOLANA · USDC-READY'; }
+    } else {
+        if (dot)     { dot.className = 'wallet-dot not-connected'; }
+        if (label)   { label.textContent = 'NOT CONNECTED'; label.style.color = '#3a5a3a'; }
+        if (btn)     { btn.textContent = 'CONNECT'; }
+        if (addrRow) { addrRow.style.display = 'none'; }
+        if (netRow)  { netRow.style.display = 'none'; }
+    }
+
+    /* settings wallet section */
+    const sStatus  = document.getElementById('settingsWalletStatus');
+    const sDetails = document.getElementById('settingsWalletDetails');
+    const sAddr    = document.getElementById('settingsWalletAddr');
+    const sNet     = document.getElementById('settingsWalletNetwork');
+    const sBtn     = document.getElementById('settingsWalletBtn');
+
+    if (addr) {
+        if (sStatus)  { sStatus.textContent = 'CONNECTED'; sStatus.style.color = '#00ff41'; }
+        if (sDetails) { sDetails.style.display = 'block'; }
+        if (sAddr)    { sAddr.textContent = addr; }
+        if (sNet)     { sNet.textContent = 'Solana · USDC-ready'; }
+        if (sBtn)     { sBtn.textContent = 'CHANGE'; }
+    } else {
+        if (sStatus)  { sStatus.textContent = 'NOT CONNECTED'; sStatus.style.color = '#3a5a3a'; }
+        if (sDetails) { sDetails.style.display = 'none'; }
+        if (sBtn)     { sBtn.textContent = 'CONNECT'; }
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TREASURY ENGINE
+   ═══════════════════════════════════════════════════════ */
+
+const TREASURY_KEY = 'tp_treasury_usdc_cents';
+
+function getTreasuryBalance() {
+    return parseInt(localStorage.getItem(TREASURY_KEY) || '0', 10);
+}
+
+function setTreasuryBalance(cents) {
+    localStorage.setItem(TREASURY_KEY, String(cents));
+    updateTreasuryDisplay();
+}
+
+function updateTreasuryDisplay() {
+    const el = document.getElementById('treasuryDisplay');
+    if (!el) return;
+    const username  = tpGetSession();
+    const user      = username ? tpGetUser(username) : null;
+    const connected = user && user.walletAddress;
+    if (connected) {
+        const dollars = (getTreasuryBalance() / 100).toFixed(2);
+        el.style.display = 'block';
+        el.textContent   = 'TREASURY: $' + dollars + ' USDC';
+    } else {
+        el.style.display = 'none';
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   USDC PAYMENT STUBS
+   ═══════════════════════════════════════════════════════ */
+
+function initiateUSDCBoost(pkgId) {
+    /* USDC PAYMENT INTEGRATION POINT
+     * Replace with Solana SPL token transfer flow:
+     * 1. Verify user.walletAddress
+     * 2. Build USDC transfer (mint: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
+     * 3. Sign via Phantom/Solflare signAndSendTransaction
+     * 4. On confirmed tx → fulfillBoostPurchase(username, pkg.pts, pkgId, pkg.priceCents)
+     */
+    const username = tpGetSession();
+    if (!username) { openTPModal(); return; }
+    const user = tpGetUser(username);
+    if (!user || !user.walletAddress) {
+        openWalletFlow();
+        tpShowLuckToast('CONNECT WALLET TO PAY WITH USDC');
+        return;
+    }
+    tpShowLuckToast('USDC PAYMENT — COMING SOON');
+}
+
+function initiateUSDCPass() {
+    /* USDC PAYMENT STUB — same pattern as initiateUSDCBoost
+     * On confirmed tx → fulfillPassPurchase(username)
+     */
+    const username = tpGetSession();
+    if (!username) { openTPModal(); return; }
+    const user = tpGetUser(username);
+    if (!user || !user.walletAddress) {
+        openWalletFlow();
+        tpShowLuckToast('CONNECT WALLET TO PAY WITH USDC');
+        return;
+    }
+    tpShowLuckToast('USDC PAYMENT — COMING SOON');
+}
+
+/* ═══════════════════════════════════════════════════════
+   REDEMPTION WORKFLOW
+   ═══════════════════════════════════════════════════════ */
+
+function getRedemptionState(invItem) {
+    /* returns { state, label, color } */
+    if (!invItem) return { state: 'locked', label: 'LOCKED', color: '#4a3a5a' };
+
+    const req = invItem.redemptionRequest;
+    if (req) {
+        if (req.status === 'completed') return { state: 'completed', label: 'COMPLETED',  color: '#3a5a3a' };
+        if (req.status === 'approved')  return { state: 'approved',  label: 'APPROVED',   color: '#7b8ff5' };
+        if (req.status === 'pending')   return { state: 'pending',   label: 'PENDING ↗',  color: '#ffd700' };
+    }
+
+    /* non-cash items — simpler flow */
+    if (invItem.type !== 'cash') {
+        if (invItem.redeemState === 'redeemed') return { state: 'completed', label: 'REDEEMED', color: '#3a5a3a' };
+        return { state: 'requestable', label: 'REDEEM', color: '#c026d3' };
+    }
+
+    /* cash items must be trade-unlocked */
+    if (!isTradeUnlocked(invItem)) {
+        const lock = tradeLockLabel(invItem);
+        return { state: 'locked', label: 'LOCKED — ' + lock.text, color: '#4a3a5a' };
+    }
+    if (invItem.redeemState === 'redeemed') return { state: 'pending', label: 'PENDING ↗', color: '#ffd700' };
+    return { state: 'requestable', label: 'REQUEST REDEMPTION', color: '#ffd700' };
+}
+
+function requestRedemption(itemId) {
+    const username = tpGetSession();
+    if (!username) { openTPModal(); return; }
+    const user = tpGetUser(username);
+    if (!user) return;
+
+    const invIdx = user.inventory.findIndex(i => i.id === itemId);
+    if (invIdx === -1) return;
+    const invItem = user.inventory[invIdx];
+
+    const state = getRedemptionState(invItem);
+    if (state.state !== 'requestable') return;
+
+    invItem.redemptionRequest = {
+        status:      'pending',
+        requestedAt: new Date().toISOString(),
+        itemId,
+        itemName:    invItem.name,
+        type:        invItem.type,
+        cashValue:   invItem.cashValue || null,
+    };
+    invItem.redeemState = 'redeemed';
+
+    if (!user.redemptionRequests) user.redemptionRequests = [];
+    user.redemptionRequests.unshift(invItem.redemptionRequest);
+    user.inventory[invIdx] = invItem;
+    tpSaveUser(username, user);
+
+    tpShowLuckToast('REDEMPTION REQUESTED — PENDING REVIEW');
+
+    renderTPInventory(user);
+    /* refresh detail modal if open */
+    const detailModal = document.getElementById('itemDetailModal');
+    if (detailModal && !detailModal.classList.contains('hidden')) {
+        openItemDetail(itemId, 'inventory');
+    }
+}
+
+/* ── account data backfill ── */
+function backfillAccount(username) {
+    const user = tpGetUser(username);
+    if (!user) return;
+    let changed = false;
+    if (!user.purchases)           { user.purchases = [];           changed = true; }
+    if (!user.sponsorInteractions) { user.sponsorInteractions = []; changed = true; }
+    if (!user.premiumPass)         { user.premiumPass = [];         changed = true; }
+    if (!user.redemptionRequests)  { user.redemptionRequests = [];  changed = true; }
+    if (!user.freeEntries)         { user.freeEntries = 0;          changed = true; }
+    if (changed) tpSaveUser(username, user);
+}
+
+/* ── economy boot ── */
+updatePoolDisplay(false);
+renderDrop();
+initSponsorTaskUI();
+updatePassStatusUI();
+updateTreasuryDisplay();
+</script>
+</body>
+</html>
