@@ -4,6 +4,7 @@ const nextConfig = {
     // Toggle: "true" = full-site maintenance screen. Override with MAINTENANCE_MODE=false locally or in hosting env.
     MAINTENANCE_MODE: process.env.MAINTENANCE_MODE ?? "true",
   },
+  /* config options here */
 };
 
 export default nextConfig;
