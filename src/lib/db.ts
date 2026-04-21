@@ -747,10 +747,13 @@ export function getPromoCode(code: string): PromoCode | undefined {
   return getPromoCodes().find(p => p.code.toUpperCase() === code.toUpperCase().trim());
 }
 
+const DEFAULT_PROMO_MAX_USES = 5;
+
 export function isPromoValid(code: string, userId: string): { valid: true; promo: PromoCode } | { valid: false; reason: string } {
   const promo = getPromoCode(code);
   if (!promo || !promo.active) return { valid: false, reason: "Invalid code" };
-  if (promo.maxUses !== null && promo.uses >= promo.maxUses) return { valid: false, reason: "Code limit reached" };
+  const maxUses = promo.maxUses ?? DEFAULT_PROMO_MAX_USES;
+  if (promo.uses >= maxUses) return { valid: false, reason: "Code limit reached" };
   const usages = read<PromoUsage>(PROMO_USAGES_FILE);
   if (usages.some(u => u.code.toUpperCase() === code.toUpperCase() && u.userId === userId))
     return { valid: false, reason: "Already redeemed" };
