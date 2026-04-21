@@ -113,6 +113,7 @@ export default function Home() {
   const [contactPreset, setContactPreset] = useState("");
   const [contactSending, setContactSending] = useState(false);
   const [contactSent, setContactSent] = useState(false);
+  const [contactError, setContactError] = useState("");
   const [showTherapeuticHint, setShowTherapeuticHint] = useState(false);
 
   /* ── intro overlay ── */
@@ -447,6 +448,7 @@ export default function Home() {
     e.preventDefault();
     if (!contactReason || contactSending) return;
     setContactSending(true);
+    setContactError("");
     try {
       const contactVal = contactXUser.trim();
       const xPart = contactVal ? `Contact: ${contactVal}` : "";
@@ -459,6 +461,8 @@ export default function Home() {
           title: contactReason,
           message,
           contactInfo: contactVal || undefined,
+          preset: contactPreset || undefined,
+          note: notePart || undefined,
         }),
       });
       if (res.ok) {
@@ -468,8 +472,12 @@ export default function Home() {
           fetch("/api/requests").then(r => r.json()).then(d => { if (d.requests) setMyRequests(d.requests); }).catch(() => {});
           addFeedItem(`${user.username} sent a transmission`, "general");
         }
+      } else {
+        setContactError("Transmission failed. Please try again.");
       }
-    } catch {}
+    } catch {
+      setContactError("Transmission failed. Please try again.");
+    }
     setContactSending(false);
   }
 
@@ -1027,6 +1035,11 @@ export default function Home() {
                 >
                   {contactSending ? "TRANSMITTING..." : "SEND TRANSMISSION"}
                 </button>
+                {contactError && (
+                  <div style={{ marginTop: "10px", fontSize: "0.75rem", color: "#ff4444", letterSpacing: "0.12em", textAlign: "center" }}>
+                    ✗ {contactError}
+                  </div>
+                )}
               </form>
             )}
           </div>
