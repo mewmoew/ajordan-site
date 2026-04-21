@@ -37,6 +37,8 @@ export interface User {
   passwordHash: string;
   salt: string;
   createdAt: string;
+  email?: string;
+  earlyAccess?: boolean;
 }
 
 export interface Session {
@@ -112,7 +114,7 @@ export function getUserByUsername(username: string): User | undefined {
   return getUsers().find((u) => u.username.toLowerCase() === username.toLowerCase());
 }
 
-export function createUser(username: string, password: string): User {
+export function createUser(username: string, password: string, email?: string, earlyAccess?: boolean): User {
   const users = getUsers();
   const { hash, salt } = hashPassword(password);
   const user: User = {
@@ -121,6 +123,8 @@ export function createUser(username: string, password: string): User {
     passwordHash: hash,
     salt,
     createdAt: new Date().toISOString(),
+    ...(email ? { email } : {}),
+    ...(earlyAccess ? { earlyAccess: true } : {}),
   };
   users.push(user);
   write(USERS_FILE, users);
@@ -709,4 +713,70 @@ export function addBooking(
   bookings.push(booking);
   write(BOOKINGS_FILE, bookings);
   return booking;
+}
+
+/* ── promo codes ──────────────────────────────────────── */
+// Add codes manually to data/promo_codes.json:
+// [{ "code": "EARLYBIRD", "xpBonus": 50, "description": "+50 XP Early Bird", "maxUses": null, "uses": 0, "active": true, "createdAt": "..." }]
+
+const PROMO_CODES_FILE  = "promo_codes.json";
+const PROMO_USAGES_FILE = "promo_usages.json";
+
+export interface PromoCode {
+  code: string;
+  xpBonus: number;
+  description: string;
+  maxUses: number | null;
+  uses: number;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface PromoUsage {
+  code: string;
+  userId: string;
+  username: string;
+  appliedAt: string;
+}
+
+export function getPromoCodes(): PromoCode[] {
+  return read<PromoCode>(PROMO_CODES_FILE);
+}
+
+export function getPromoCode(code: string): PromoCode | undefined {
+  return getPromoCodes().find(p => p.code.toUpperCase() === code.toUpperCase().trim());
+}
+
+export function isPromoValid(code: string, userId: string): { valid: true; promo: PromoCode } | { valid: false; reason: string } {
+  const promo = getPromoCode(code);
+  if (!promo || !promo.active) return { valid: false, reason: "Invalid code" };
+  if (promo.maxUses !== null && promo.uses >= promo.maxUses) return { valid: false, reason: "Code limit reached" };
+  const usages = read<PromoUsage>(PROMO_USAGES_FILE);
+  if (usages.some(u => u.code.toUpperCase() === code.toUpperCase() && u.userId === userId))
+    return { valid: false, reason: "Already redeemed" };
+  return { valid: true, promo };
+}
+
+export function redeemPromoCode(code: string, userId: string, username: string): PromoCode | null {
+  const check = isPromoValid(code, userId);
+  if (!check.valid) return null;
+  const { promo } = check;
+
+  // Increment usage count
+  const codes = getPromoCodes();
+  const idx = codes.findIndex(p => p.code.toUpperCase() === code.toUpperCase());
+  if (idx === -1) return null;
+  codes[idx].uses += 1;
+  write(PROMO_CODES_FILE, codes);
+
+  // Log usage
+  const usages = read<PromoUsage>(PROMO_USAGES_FILE);
+  usages.push({ code: code.toUpperCase(), userId, username, appliedAt: new Date().toISOString() });
+  write(PROMO_USAGES_FILE, usages);
+
+  // Apply XP bonus
+  const account = getAccount(userId);
+  updateAccount(userId, { points: account.points + promo.xpBonus });
+
+  return promo;
 }
