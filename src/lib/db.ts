@@ -63,6 +63,12 @@ export interface PrivateRequest {
   createdAt: string;
   guest?: boolean;
   contactInfo?: string;
+  submissionType?: "free" | "tb_unlock" | "priority";
+  tbSpent?: number;
+  userRank?: string;
+  xpAtSubmission?: number;
+  streakAtSubmission?: number;
+  preset?: string;
 }
 
 export interface Booking {
@@ -196,7 +202,13 @@ export function addRequest(
   title: string,
   message: string,
   guest?: boolean,
-  contactInfo?: string
+  contactInfo?: string,
+  submissionType?: "free" | "tb_unlock" | "priority",
+  tbSpent?: number,
+  userRank?: string,
+  xpAtSubmission?: number,
+  streakAtSubmission?: number,
+  preset?: string,
 ): PrivateRequest {
   const requests = getRequests();
   const req: PrivateRequest = {
@@ -209,6 +221,12 @@ export function addRequest(
     createdAt: new Date().toISOString(),
     ...(guest ? { guest: true } : {}),
     ...(contactInfo ? { contactInfo } : {}),
+    submissionType: submissionType ?? "free",
+    ...(tbSpent ? { tbSpent } : {}),
+    ...(userRank ? { userRank } : {}),
+    ...(xpAtSubmission !== undefined ? { xpAtSubmission } : {}),
+    ...(streakAtSubmission !== undefined ? { streakAtSubmission } : {}),
+    ...(preset ? { preset } : {}),
   };
   requests.push(req);
   write(REQUESTS_FILE, requests);
@@ -237,6 +255,11 @@ export interface UserAccount {
   lastDailyClaimAt: string | null;
   dailyStreak: number;
   updatedAt: string;
+  // X integration prep — populated when user connects X account
+  xHandle?: string;
+  isXConnected?: boolean;
+  totalActions?: number;
+  lastXSync?: string | null;
 }
 
 export function getAccounts(): UserAccount[] {

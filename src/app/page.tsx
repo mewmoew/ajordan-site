@@ -52,6 +52,13 @@ interface VaultData {
 
 /* ── static feed data ───────────────────────────────────── */
 
+/* ── Contact submission tiers ───────────────────────────── */
+const CONTACT_TIERS = [
+  { type: "free"      as const, label: "STANDARD", cost: 0,  sub: "free"  },
+  { type: "tb_unlock" as const, label: "PRIORITY",  cost: 2,  sub: "2 TB" },
+  { type: "priority"  as const, label: "DEEP WORK", cost: 5,  sub: "5 TB" },
+] as const;
+
 /* ══════════════════════════════════════════════════════════
    COMPONENT
 ═══════════════════════════════════════════════════════════ */
@@ -114,6 +121,7 @@ export default function Home() {
   const [contactSending, setContactSending] = useState(false);
   const [contactSent, setContactSent] = useState(false);
   const [contactError, setContactError] = useState("");
+  const [contactSubmissionType, setContactSubmissionType] = useState<"free" | "tb_unlock" | "priority">("free");
   const [showTherapeuticHint, setShowTherapeuticHint] = useState(false);
 
   /* ── intro overlay ── */
@@ -447,6 +455,7 @@ export default function Home() {
   async function submitContact(e: React.FormEvent) {
     e.preventDefault();
     if (!contactReason || contactSending) return;
+    const tier = CONTACT_TIERS.find(t => t.type === contactSubmissionType) ?? CONTACT_TIERS[0];
     setContactSending(true);
     setContactError("");
     try {
@@ -463,17 +472,33 @@ export default function Home() {
           contactInfo: contactVal || undefined,
           preset: contactPreset || undefined,
           note: notePart || undefined,
+          submissionType: contactSubmissionType,
+          tbCost: tier.cost,
         }),
       });
       if (res.ok) {
+        const data = await res.json();
         setContactSent(true);
-        setTimeout(() => { setShowContact(false); setContactSent(false); }, 2500);
+        setTimeout(() => {
+          setShowContact(false);
+          setContactSent(false);
+          setContactSubmissionType("free");
+        }, 2500);
         if (user) {
           fetch("/api/requests").then(r => r.json()).then(d => { if (d.requests) setMyRequests(d.requests); }).catch(() => {});
           addFeedItem(`${user.username} sent a transmission`, "general");
+          // Refresh vault balance if TB was spent
+          if (tier.cost > 0 || data.newTbBalance !== undefined) {
+            fetch("/api/account").then(r => r.json()).then(d => { if (d) setVault(d); }).catch(() => {});
+          }
         }
       } else {
-        setContactError("Transmission failed. Please try again.");
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 402) {
+          setContactError("Not enough TB for this option.");
+        } else {
+          setContactError(data.error ?? "Transmission failed. Please try again.");
+        }
       }
     } catch {
       setContactError("Transmission failed. Please try again.");
@@ -770,7 +795,7 @@ export default function Home() {
             padding: "16px",
             overflowY: "auto",
           }}
-          onClick={() => setShowContact(false)}
+          onClick={() => { setShowContact(false); setContactSubmissionType("free"); setContactError(""); }}
         >
           <div
             style={{
@@ -792,7 +817,7 @@ export default function Home() {
                 // CONTACT AJORDAN //
               </div>
               <button
-                onClick={() => setShowContact(false)}
+                onClick={() => { setShowContact(false); setContactSubmissionType("free"); setContactError(""); }}
                 style={{ color: "#c026d3", background: "none", border: "none", cursor: "pointer", fontSize: "1.8rem", lineHeight: 1 }}
               >×</button>
             </div>
@@ -861,6 +886,63 @@ export default function Home() {
                     So Todd can reach you back — not required but recommended.
                   </div>
                 </div>
+
+                {/* ── Submission type — logged-in users only ── */}
+                {user && vault && (() => {
+                  const tb = vault.points;
+                  const lvl = getSignalLevel(vault);
+                  const statusText = tb >= 5 ? "DEEP WORK UNLOCKED" : tb >= 2 ? "PRIORITY UNLOCKED" : "STANDARD QUEUE";
+                  const statusColor = tb >= 5 ? "#00e5ff" : tb >= 2 ? "#a0a830" : "#3a5a4a";
+                  return (
+                    <div style={{ marginBottom: "18px" }}>
+                      {/* Status row */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+                        <span style={{ fontFamily: "var(--font-vt323),'VT323',monospace", fontSize: "1.05rem", color: "#00e5ff", letterSpacing: "0.08em" }}>
+                          {tb} <span style={{ fontSize: "0.65em", color: "#2a5a6a" }}>TB</span>
+                        </span>
+                        <span style={{ color: "#1a3a4a", fontSize: "0.7rem" }}>·</span>
+                        <span style={{ fontSize: "0.7rem", color: lvl.color, letterSpacing: "0.1em" }}>{lvl.label}</span>
+                        <span style={{ color: "#1a3a4a", fontSize: "0.7rem" }}>·</span>
+                        <span style={{ fontSize: "0.65rem", color: statusColor, letterSpacing: "0.1em" }}>{statusText}</span>
+                      </div>
+                      {/* Tier selector */}
+                      <label style={{ display: "block", fontSize: "0.75rem", letterSpacing: "0.18em", color: "#00bcd4", marginBottom: "8px" }}>
+                        SUBMISSION TYPE
+                      </label>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px" }}>
+                        {CONTACT_TIERS.map(tier => {
+                          const canAfford = tb >= tier.cost;
+                          const isSelected = contactSubmissionType === tier.type;
+                          const isLocked = tier.cost > 0 && !canAfford;
+                          return (
+                            <button
+                              key={tier.type}
+                              type="button"
+                              disabled={isLocked}
+                              onClick={() => !isLocked && setContactSubmissionType(tier.type)}
+                              style={{
+                                padding: "9px 4px",
+                                background: isSelected ? "rgba(0,229,255,0.1)" : isLocked ? "rgba(0,0,0,0.25)" : "rgba(0,229,255,0.03)",
+                                border: `1px solid ${isSelected ? "rgba(0,229,255,0.5)" : isLocked ? "rgba(0,229,255,0.07)" : "rgba(0,229,255,0.14)"}`,
+                                color: isSelected ? "#00e5ff" : isLocked ? "#1a3040" : "#2a6a7a",
+                                fontFamily: "var(--font-vt323),'VT323',monospace",
+                                letterSpacing: "0.12em",
+                                cursor: isLocked ? "not-allowed" : "pointer",
+                                transition: "all 0.15s",
+                                textAlign: "center",
+                              }}
+                            >
+                              <div style={{ fontSize: "0.95rem" }}>{tier.label}</div>
+                              <div style={{ fontSize: "0.62rem", color: isLocked ? "#1a2a3a" : isSelected ? "rgba(0,229,255,0.55)" : "#1a4a5a", marginTop: "2px" }}>
+                                {tier.cost === 0 ? "free" : `${tier.cost} TB${isLocked ? " · locked" : ""}`}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* reason buttons */}
                 <div style={{ marginBottom: "18px" }}>
@@ -1033,7 +1115,11 @@ export default function Home() {
                     transform: contactSending ? "scale(0.995)" : "scale(1)",
                   }}
                 >
-                  {contactSending ? "TRANSMITTING..." : "SEND TRANSMISSION"}
+                  {contactSending
+                    ? "TRANSMITTING..."
+                    : contactSubmissionType !== "free"
+                      ? `TRANSMIT — ${CONTACT_TIERS.find(t => t.type === contactSubmissionType)?.cost} TB`
+                      : "SEND TRANSMISSION"}
                 </button>
                 {contactError && (
                   <div style={{ marginTop: "10px", fontSize: "0.75rem", color: "#ff4444", letterSpacing: "0.12em", textAlign: "center" }}>
