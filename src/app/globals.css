@@ -3938,3 +3938,71 @@ html {
 
   .wtt-tier-cost-val { font-size: 2rem; }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE POLISH — full cat image, WTT text density, tighter layout
+   These rules intentionally override earlier mobile blocks above.
+───────────────────────────────────────────────────────────────*/
+@media (max-width: 640px) {
+
+  /* ── Profile/cat image: show the full image without cropping ── */
+  .glass-left img.w-full {
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: initial !important;
+    object-position: initial !important;
+    display: block;
+    margin: 0 auto 14px !important;
+  }
+
+  /* ── WTT: hide verbose secondary copy — keep one key line per block ── */
+  .wtt-desc-block          { display: none !important; }
+  .wtt-currency-desc       { display: none !important; }
+  .wtt-balance-stack-note  { display: none !important; }
+  .wtt-limit-note          { display: none !important; }
+
+  /* Hide the duplicate philosophy line inside the WTT panel */
+  .wtt-panel .core-philosophy-line { display: none !important; }
+
+  /* ── WTT currency block: title only, tighter ── */
+  .wtt-currency-block {
+    padding: 8px 10px !important;
+    margin-bottom: 12px !important;
+  }
+  .wtt-currency-title { margin-bottom: 0 !important; }
+
+  /* ── WTT balance card: compact ── */
+  .wtt-balance-card {
+    padding: 10px 12px !important;
+    margin-bottom: 12px !important;
+    gap: 8px !important;
+  }
+
+  /* ── Tier cards: compact, description hidden ── */
+  .wtt-tier {
+    padding: 11px 12px 10px !important;
+    gap: 4px !important;
+  }
+  .wtt-tier-desc { display: none !important; }
+
+  .wtt-tier-grid {
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .wtt-header { margin-bottom: 3px !important; }
+
+  /* ── Section spacing ── */
+  .live-feed-section { margin-top: 10px !important; }
+  .wtt-panel          { margin-top: 10px !important; }
+}
+
+/* Override the 390px image crop so the cat is always fully visible */
+@media (max-width: 390px) {
+  .glass-left img.w-full {
+    max-height: none !important;
+    object-fit: initial !important;
+  }
+}
