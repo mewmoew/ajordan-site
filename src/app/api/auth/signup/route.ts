@@ -1,4 +1,4 @@
-import { createUser, getUserByUsername, createSession, grantStarterRewards, initDropsIfEmpty, redeemPromoCode } from "@/lib/db";
+import { createUser, getUserByUsername, getUsers, createSession, grantStarterRewards, initDropsIfEmpty, redeemPromoCode } from "@/lib/db";
 import { cookies } from "next/headers";
 import { Resend } from "resend";
 
@@ -50,6 +50,38 @@ function buildWelcomeEmail(username: string, promoApplied?: { xpBonus: number; d
 </html>`;
 }
 
+function buildOwnerNotificationEmail(
+  username: string,
+  email: string | undefined,
+  promoApplied: { xpBonus: number; description: string } | undefined,
+  earlyAccessCount: number,
+): string {
+  const promoRow = promoApplied
+    ? `<tr><td style="padding:8px 16px;border-bottom:1px solid #150a25;color:#5a4a7a;font-size:0.7em;letter-spacing:0.16em;width:130px;">PROMO</td><td style="padding:8px 16px;border-bottom:1px solid #150a25;color:#00e5ff;font-size:0.85em;">${promoApplied.description} · +${promoApplied.xpBonus} XP</td></tr>`
+    : "";
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;background:#07070f;font-family:monospace;">
+  <div style="max-width:520px;margin:0 auto;background:#0d0d18;border:1px solid rgba(0,255,65,0.25);border-top:3px solid #00ff41;">
+    <div style="padding:18px 24px 14px;border-bottom:1px solid rgba(0,255,65,0.1);">
+      <div style="color:#00ff41;font-size:1.1em;letter-spacing:0.22em;">// NEW EARLY SIGNUP //</div>
+      <div style="color:#3a6a3a;font-size:0.7em;letter-spacing:0.14em;margin-top:3px;">AJORDAN NETWORK · EARLY ACCESS</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+      <tr><td style="padding:8px 16px;border-bottom:1px solid #150a25;color:#5a4a7a;font-size:0.7em;letter-spacing:0.16em;width:130px;">USERNAME</td><td style="padding:8px 16px;border-bottom:1px solid #150a25;color:#00ff41;font-size:0.9em;letter-spacing:0.08em;">@${username}</td></tr>
+      <tr><td style="padding:8px 16px;border-bottom:1px solid #150a25;color:#5a4a7a;font-size:0.7em;letter-spacing:0.16em;">EMAIL</td><td style="padding:8px 16px;border-bottom:1px solid #150a25;color:#e0d8f0;font-size:0.85em;">${email ?? "—"}</td></tr>
+      ${promoRow}
+      <tr><td style="padding:8px 16px;color:#5a4a7a;font-size:0.7em;letter-spacing:0.16em;">TOTAL EARLY</td><td style="padding:8px 16px;color:#c026d3;font-size:0.85em;">${earlyAccessCount} signed up</td></tr>
+    </table>
+    <div style="padding:10px 24px;border-top:1px solid rgba(0,255,65,0.08);color:#2a4a2a;font-size:0.62em;letter-spacing:0.12em;">
+      AJORDAN NETWORK · EARLY ACCESS NOTIFICATION
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
 export async function POST(req: Request) {
   try {
     const { username, password, email, promoCode, earlyAccess } = await req.json();
@@ -85,17 +117,34 @@ export async function POST(req: Request) {
       httpOnly: true, path: "/", maxAge: 30 * 24 * 60 * 60, sameSite: "lax",
     });
 
-    // Send welcome email (non-fatal)
-    if (resend && email?.trim() && process.env.RESEND_FROM_EMAIL) {
+    const trimmedEmail = email?.trim() || undefined;
+    const earlyAccessCount = getUsers().filter(u => u.earlyAccess).length;
+
+    // Welcome email to the new user (non-fatal)
+    if (resend && trimmedEmail && process.env.RESEND_FROM_EMAIL) {
       try {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL,
-          to: email.trim(),
+          to: trimmedEmail,
           subject: "you're in early 🔥 — AJORDAN Network",
           html: buildWelcomeEmail(username, promoApplied),
         });
       } catch (err) {
         console.error("[signup] welcome email failed:", err);
+      }
+    }
+
+    // Owner notification email (non-fatal)
+    if (resend && process.env.CONTACT_EMAIL && process.env.RESEND_FROM_EMAIL) {
+      try {
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL,
+          to: process.env.CONTACT_EMAIL,
+          subject: `New Early Signup — @${username}`,
+          html: buildOwnerNotificationEmail(username, trimmedEmail, promoApplied, earlyAccessCount),
+        });
+      } catch (err) {
+        console.error("[signup] owner notification failed:", err);
       }
     }
 

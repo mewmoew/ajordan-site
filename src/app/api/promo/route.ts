@@ -9,7 +9,8 @@ export async function GET(req: Request) {
 
   const promo = getPromoCode(code);
   if (!promo || !promo.active) return Response.json({ valid: false, reason: "Invalid code" });
-  if (promo.maxUses !== null && promo.uses >= promo.maxUses)
+  const effectiveMaxUses = promo.maxUses ?? 5;
+  if (promo.uses >= effectiveMaxUses)
     return Response.json({ valid: false, reason: "Code limit reached" });
 
   return Response.json({ valid: true, xpBonus: promo.xpBonus, description: promo.description });
